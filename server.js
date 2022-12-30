@@ -12,6 +12,8 @@ const usersRoutes = require("./api_routes/users.routes");
 const authRoutes = require("./api_routes/auth.routes");
 const deptRoutes = require("./api_routes/departments.routes");
 const modRoutes = require("./api_routes/modules.routes");
+const roomsRoutes = require("./api_routes/rooms.routes");
+const groupsRoutes = require("./api_routes/groups.routes");
 const morgan = require("morgan");
 const {log} = require("mercedlogger");
 
@@ -68,13 +70,15 @@ var swaggerSpecs = swaggerJsdoc(options);
 app.use("/api/", initialRoute);
 app.use("/api/building", buildingRoutes);
 app.use("/api/roomType", roomTypesRoutes);
+app.use("/api/rooms", roomsRoutes);
 app.use("/api/role", rolesRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/departments", deptRoutes);
 app.use("/api/modules", modRoutes);
+app.use("/api/groups", groupsRoutes);
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 app.listen(PORT, () => {
-  log.green("SERVER STATUS", `server is running on http://localhost:${PORT}`);
+  log.green("SERVER STATUS", `Running on http://localhost:${PORT}`);
 });

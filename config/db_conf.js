@@ -7,7 +7,7 @@ const connectDB = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
-        log.green("DB STATUS", `MongoDB connected on: ${conn.connection.port}`);
+        log.green("DB STATUS", `connected on: ${conn.connection.port}`);
     } catch (err) {
         log.red("DB STATUS",err);
     }

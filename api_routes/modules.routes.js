@@ -8,7 +8,7 @@ const router = express.Router();
  *  get:
  *      summary: Get all modules
  *      tags:
- *         - Modules
+ *         - Modules endpoints
  *      parameters: []
  *      responses:
  *          200:
@@ -26,7 +26,7 @@ router.get("/", getAllModules);
  *  get:
  *      summary: Get module by id
  *      tags:
- *          - Modules
+ *          - Modules endpoints
  *      parameters:
  *          -   name: id
  *              in: path
@@ -84,7 +84,7 @@ router.get("/:id", getModuleById);
  *  post:
  *      summary: Create a module
  *      tags:
- *         - Modules
+ *         - Modules endpoints
  *      parameters: []
  *      produces:
  *         - application/json
@@ -113,7 +113,7 @@ router.post("/create", createModule);
  *  put:
  *      summary: Update Module by Id
  *      tags:
- *          - Modules
+ *          - Modules endpoints
  *      parameters:
  *          -   name: id
  *              in: path
@@ -143,7 +143,7 @@ router.put("/update/:id", updateModule);
  *  put:
  *      summary: Update Module Status by Id
  *      tags:
- *          - Modules
+ *          - Modules endpoints
  *      parameters:
  *          -   name: id
  *              in: path
@@ -176,7 +176,7 @@ router.put("/change/status/:id", changeModuleStatus);
  *  put:
  *      summary: Update Module Department by Id
  *      tags:
- *          - Modules
+ *          - Modules endpoints
  *      parameters:
  *          -   name: id
  *              in: path

@@ -16,7 +16,7 @@ const RoomsSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  building: {
+  room_building: {
     type: String,
     reference: {
       type: mongoose.Schema.Types.ObjectId,
@@ -27,32 +27,47 @@ const RoomsSchema = new mongoose.Schema({
       validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid building reference format!`,
+      message: (props) =>
+        `${props.value} is not a valid building reference format!`,
     },
   },
-  coordinates: {
+  room_coordinates: {
     type: Array,
     required: false,
     validate: {
       validator: function (v) {
         // validate array of lat and long coordinates
-        let latitude = "(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)";
-        let longitude = "(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?))(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*";
-
-        return new RegExp(`^\[${latitude},(\s?)${longitude}]$`).test(v);
+        return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]|^(null)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid room location format!`,
-    }
+    },
   },
   capacity: {
     type: Number,
     required: false,
     validate: {
       validator: function (v) {
-        return /^[1-9]{2,4}*$/.test(v);
+        return new RegExp(`^[1-9]{2,4}*$`).test(v);
       },
       message: (props) => `${props.value} is not a valid room capacity!`,
-    }
+    },
+  },
+  room_seats_arrangement: {
+    type: Array,
+    required: false,
+    validate: {
+      validator: function (v) {
+        // generate regex for fitting the format [1,2]
+        return new RegExp(`^/^([[1-9]{1,2},s?)+[1-9]{1,2}]$|^$/`);
+      },
+      message: (props) =>
+        `${props.value} is not a valid room seats arrangement format!`,
+    },
+  },
+  has_fixed_seats: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   responsible: {
     type: String,
@@ -65,8 +80,9 @@ const RoomsSchema = new mongoose.Schema({
       validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid room responsible reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid room responsible reference format!`,
+    },
   },
   room_type: {
     type: String,
@@ -76,11 +92,12 @@ const RoomsSchema = new mongoose.Schema({
     },
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid room type reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid room type reference format!`,
+    },
   },
   resources: {
     type: Array,
@@ -92,10 +109,14 @@ const RoomsSchema = new mongoose.Schema({
     default: null,
     validate: {
       validator: function (v) {
-        return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v);
+        return v === null
+          ? true
+          : /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
+              v
+            );
       },
       message: (props) => `${props.value} is not a valid room image url!`,
-    }
+    },
   },
   added_on: {
     type: Date,
@@ -111,7 +132,7 @@ const RoomsSchema = new mongoose.Schema({
         return /^(active|disabled|terminated)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
-    }
+    },
   },
 });
 

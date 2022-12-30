@@ -45,14 +45,14 @@ exports.login = async (req, res) => {
     });
     // if user not found
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ status: 404, message: "User not found" });
     }
     // if user found
     // compare password
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     // if password not matched
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({ status: 400, message: "Invalid credentials" });
     }
     // if password matched
     // create a token
@@ -60,9 +60,11 @@ exports.login = async (req, res) => {
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });
     // send token as response
-    res.json({ token });
+    res.status(200).json({ status: 200, message: 'Logged in successful', data: {
+      fullname:user.fullname,email:user.email,mobile_no:user.mobile_no
+    }, token });
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: error });
   }
 };
 
