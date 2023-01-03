@@ -34,13 +34,16 @@ const RoomsSchema = new mongoose.Schema({
   room_coordinates: {
     type: Array,
     required: false,
-    validate: {
-      validator: function (v) {
-        // validate array of lat and long coordinates
-        return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]|^(null)$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid room location format!`,
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     // validate array of lat and long coordinates
+    //     return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]|^(null)$/.test(
+    //       v
+    //     );
+    //   },
+    //   message: (props) => `${props.value} is not a valid room location format!`,
+    // },
+    default: null,
   },
   capacity: {
     type: Number,

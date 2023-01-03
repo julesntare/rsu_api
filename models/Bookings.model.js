@@ -23,9 +23,10 @@ const BookingsSchema = new mongoose.Schema({
         // validate json object properties
         return (
           v.hasOwnProperty("activity_name") &&
-          v.hasOwnProperty("activity_date") &&
-          v.hasOwnProperty("activity_start_time") &&
-          v.hasOwnProperty("activity_end_time")
+          v.hasOwnProperty("activity_starting_date") &&
+          v.hasOwnProperty("activity_ending_date") &&
+          v.hasOwnProperty("activity_time") &&
+          v.hasOwnProperty("activity_recurrence")
         );
         },
       message: (props) => `${props.value} is not a valid activity object!`,
@@ -45,6 +46,10 @@ const BookingsSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid room reference format!`,
     }
   },
+  additional_info: {
+    type: String,
+    required: false,
+  },
   added_on: {
     type: Date,
     default: Date.now,
@@ -56,10 +61,17 @@ const BookingsSchema = new mongoose.Schema({
     default: "pending",
     validate: {
       validator: function(v) {
-        return /^(active|disabled|terminated)$/.test(v);
+        return /^(pending|confirmed|cancelled)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
     }
+  },
+  // field to mention if from timetable or booking call it flag
+  flag: {
+    type: Number,
+    enum: [0, 1],
+    required: false,
+    default: 0,
   },
 });
 

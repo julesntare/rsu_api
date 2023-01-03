@@ -102,7 +102,7 @@ router.get("/:id", getBuildingById);
  *            schema:
  *              $ref: '#/definitions/Building'
  *      responses:
- *        200:
+ *        201:
  *          description: Building created
  *        400:
  *          description: Invalid building object
