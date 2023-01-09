@@ -13,10 +13,14 @@ const router = express.Router();
  *          - email
  *          - mobile_no
  *          - password
+ *          - user_role
  *      properties:
  *          fullname:
  *              type: string
  *              description: Provide Your First, middle (if any), and Last Name
+ *          title:
+ *              type: string
+ *              description: Provide Your Campus Title
  *          email:
  *              type: string
  *              description: Provide Your Email
@@ -26,11 +30,16 @@ const router = express.Router();
  *          password:
  *              type: string
  *              description: Provide Password of your choice. password must include (>= 8 characters, at least one upperCase, one lowerCase, one symbol and one number)
+ *          user_role:
+ *              type: string
+ *              description: Provide Role ID. (use roles endpoint to get available roles)
  *      example:
  *          fullname: "John Doe"
+ *          title: "System Admin"
  *          email: "johndoe@gmail.com"
  *          mobile_no: "0788888888"
  *          password: "jodT^O3)@22"
+ *          user_role: "6377ecba5eeae9ff7c42423e"
  */
 
 /**
@@ -42,15 +51,15 @@ const router = express.Router();
  *          - email
  *          - password
  *      properties:
- *          username:
+ *          email:
  *              type: string
- *              description: The Username set in signup
+ *              description: The Email set in signup
  *          password:
  *              type: string
  *              description: The Password set in signup
  *      example:
- *          username: "J88"
- *          password: "jodT^O3)@22"
+ *          email: "julesntare@gmail.com"
+ *          password: "Ju.jo.123.rsu"
  */
 
 /**

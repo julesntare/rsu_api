@@ -31,40 +31,25 @@ const RoomsSchema = new mongoose.Schema({
         `${props.value} is not a valid building reference format!`,
     },
   },
-  room_coordinates: {
-    type: Array,
-    required: false,
-    // validate: {
-    //   validator: function (v) {
-    //     // validate array of lat and long coordinates
-    //     return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]|^(null)$/.test(
-    //       v
-    //     );
-    //   },
-    //   message: (props) => `${props.value} is not a valid room location format!`,
-    // },
-    default: null,
+  room_floor: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /^[0-9]{1}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid building floor!`,
+    },
+    default: 0,
   },
   capacity: {
     type: Number,
     required: false,
     validate: {
       validator: function (v) {
-        return new RegExp(`^[1-9]{2,4}*$`).test(v);
+        return /^[0-9]{2,}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid room capacity!`,
-    },
-  },
-  room_seats_arrangement: {
-    type: Array,
-    required: false,
-    validate: {
-      validator: function (v) {
-        // generate regex for fitting the format [1,2]
-        return new RegExp(`^/^([[1-9]{1,2},s?)+[1-9]{1,2}]$|^$/`);
-      },
-      message: (props) =>
-        `${props.value} is not a valid room seats arrangement format!`,
     },
   },
   has_fixed_seats: {
@@ -110,16 +95,6 @@ const RoomsSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: null,
-    validate: {
-      validator: function (v) {
-        return v === null
-          ? true
-          : /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
-              v
-            );
-      },
-      message: (props) => `${props.value} is not a valid room image url!`,
-    },
   },
   added_on: {
     type: Date,

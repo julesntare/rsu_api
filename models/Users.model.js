@@ -11,17 +11,6 @@ const UsersSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid name!`,
     },
   },
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: function (v) {
-        return /^[a-zA-Z0-9]{2,30}$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid username!`,
-    },
-  },
   email: {
     type: String,
     required: true,
@@ -33,6 +22,16 @@ const UsersSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid email!`,
     },
   },
+  title: {
+    type: String,
+    required: false,
+    validate: {
+      validator: function (v) {
+        return /^[a-zA-Z ]{3,30}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid title!`,
+    },
+  },
   password: {
     type: String,
     required: true,
@@ -40,7 +39,8 @@ const UsersSchema = new mongoose.Schema({
       validator: function (v) {
         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/.test(v);
       },
-      message: (props) => `${props.value} password must include: >= 8 chars, at least one upperCase, one lowerCase, one symbol and one number`,
+      message: (props) =>
+        `${props.value} password must include: >= 8 chars, at least one upperCase, one lowerCase, one symbol and one number`,
     },
   },
   mobile_no: {
@@ -52,7 +52,7 @@ const UsersSchema = new mongoose.Schema({
         return /^\+?(0)*(?:250-)?(?:250)?(7)(8|9|2|3)[0-9]{7}(?!\S)$/g.test(v);
       },
       message: (props) => `${props.value} is not a valid mobile number!`,
-    }
+    },
   },
   user_role: {
     type: String,

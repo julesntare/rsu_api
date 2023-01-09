@@ -17,10 +17,20 @@ const BuildingsSchema = mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
+        return /^[a-zA-Z0-9, ]{0,}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid building description!`,
     },
+  },
+  floors: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /^[1-9]{1,2}$/.test(v);
+      },
+      message: (props) => `${props.value} is not valid floors number`,
+    }
   },
   coordinates: {
     type: Array,

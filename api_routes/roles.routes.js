@@ -40,7 +40,8 @@ router.get("/all", getAllRoles);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Returned details for specified role (json format)
@@ -61,7 +62,7 @@ router.get("/:id", getRoleById);
  *          properties:
  *              role_name:
  *                  type: string
- *                  description: The name of the role
+ *                  description: The name of the role (Admin, Contributors, Scheduler, AssetsM)
  *              role_description:
  *                  type: string
  *                  description: The description of the role
@@ -108,7 +109,8 @@ router.post("/create", verifyToken, createRole);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Successfully deleted
@@ -132,7 +134,8 @@ router.delete("/:id", removeRole);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:

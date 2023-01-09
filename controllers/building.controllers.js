@@ -33,6 +33,7 @@ exports.createBuilding = async (req, res) => {
   const newBuilding = new BuildingModel({
     building_name: req.body.building_name,
     building_description: req.body.building_description,
+    floors: req.body.floors,
     coordinates: req.body.coordinates,
     near_locations: req.body.near_locations,
     added_on: Date.now(),

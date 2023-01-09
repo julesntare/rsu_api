@@ -22,11 +22,11 @@ exports.register = async (req, res) => {
     const newUser = new UsersModel({
       _id: new mongoose.Types.ObjectId(),
       fullname: req.body.fullname,
-      username: req.body.fullname.split(" ").slice(0, 3).toLowerCase() + req.body.mobile_no.slice(-2),
+      title: req.body.title,
       email: req.body.email,
       mobile_no: req.body.mobile_no,
       password: hashedPassword,
-      user_role: req.body.user_role || null,
+      user_role: req.body.user_role,
     });
     // save user and return response
     const userResult = await newUser.save();
@@ -40,9 +40,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     // find user
-    const user = await UsersModel.findOne({
-      $or: [{ username: req.body.username }, { email: req.body.username }],
-    });
+    const user = await UsersModel.findOne({ email: req.body.email});
     // if user not found
     if (!user) {
       return res.status(404).json({ status: 404, message: "User not found" });
@@ -52,17 +50,28 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     // if password not matched
     if (!isMatch) {
-      return res.status(400).json({ status: 400, message: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ status: 400, message: "Invalid credentials" });
     }
     // if password matched
     // create a token
-    const token = jwt.sign({ user: user._id }, RSU_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ user: user._id, userRole: user.user_role }, RSU_SECRET, { expiresIn: "1h" });
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });
     // send token as response
-    res.status(200).json({ status: 200, message: 'Logged in successful', data: {
-      fullname:user.fullname,email:user.email,mobile_no:user.mobile_no
-    }, token });
+    res.status(200).json({
+      status: 200,
+      message: "Logged in successful",
+      data: {
+        fullname: user.fullname,
+        title: user.title,
+        email: user.email,
+        mobile_no: user.mobile_no,
+        user_role: user.user_role,
+      },
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: error });
   }

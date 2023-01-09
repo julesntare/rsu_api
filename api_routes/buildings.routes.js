@@ -40,7 +40,8 @@ router.get("/all", getAllBuildings);
  *        -   name: id
  *            in: path
  *            required: true
- *            type: string
+ *            schema:
+ *              type: string
  *      responses:
  *          200:
  *              description: Returned details for specified building (json format)
@@ -66,6 +67,9 @@ router.get("/:id", getBuildingById);
  *      building_description:
  *        type: string
  *        description: Description of the building
+ *      floors:
+ *        type: number
+ *        description: Number of building floors
  *      coordinates:
  *        type: array
  *        description: Coordinates of the building
@@ -79,10 +83,11 @@ router.get("/:id", getBuildingById);
  *        type: string
  *        description: Status of the building
  *    example:
- *      building_name: "Building 1"
- *      building_description: "Building 1 description"
+ *      building_name: "Muhabura"
+ *      building_description: "Building containing classes and offices"
+ *      floors: 5
  *      coordinates: [-1.33784783, 30.19293828]
- *      near_locations: ["Location 1", "Location 2"]
+ *      near_locations: ["Kalisimbi"]
  *      status: "active"
  */
 
@@ -145,8 +150,9 @@ router.delete("/remove/:id", verifyToken, removeBuilding);
  *      parameters:
  *        - name: id
  *          in: path
- *          type: string
  *          required: true
+ *          schema:
+ *            type: string
  *      requestBody:
  *        content:
  *          application/json:

@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllUsers, getUserById, getUserByRole, updateUser, deleteUser, changeStatus, changePassword, changeRole, changeUsername, changeEmail, changePhone, searchUserByAny } = require("../controllers/users.controllers");
+const { getAllUsers, getUserById, getUserByRole, updateUser, deleteUser, changeStatus, changePassword, changeRole, changeEmail, changePhone, searchUserByAny } = require("../controllers/users.controllers");
 const router = express.Router();
 const { verifyToken } = require("../middlewares/authJWT.middleware");
 
@@ -32,7 +32,8 @@ router.get("/all", verifyToken, getAllUsers);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Returned details for specified user (json format)
@@ -54,7 +55,8 @@ router.get("/:id", verifyToken, getUserById);
  *         -    name: role
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Returned details for specified user (json format)
@@ -76,7 +78,8 @@ router.get("/role/:role", verifyToken, getUserByRole);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -84,8 +87,6 @@ router.get("/role/:role", verifyToken, getUserByRole);
  *                      type: object
  *                      properties:
  *                          fullname:
- *                              type: string
- *                          username:
  *                              type: string
  *                          status:
  *                              type: string
@@ -110,9 +111,10 @@ router.put("/update/:id", verifyToken, updateUser);
  *        -     name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
- *          200:
+ *          204:
  *              description: User deleted
  *          400:
  *              description: User not found
@@ -132,7 +134,8 @@ router.delete("/delete/:id", verifyToken, deleteUser);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *        content:
  *           application/json:
@@ -166,7 +169,8 @@ router.put("/change/password/:id", verifyToken, changePassword);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *        content:
  *           application/json:
@@ -196,7 +200,8 @@ router.put("/:id/change/role", verifyToken, changeRole);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *        content:
  *           application/json:
@@ -217,36 +222,6 @@ router.put("/:id/change/status", verifyToken, changeStatus);
 
 /**
  * @swagger
- * /api/users/{id}/change/username:
- *  put:
- *      summary: Change username of a user by id.
- *      tags:
- *          -   User endpoints
- *      parameters:
- *          -   name: id
- *              in: path
- *              required: true
- *              type: string
- *      requestBody:
- *          content:
- *              application/json:
- *                  schema:
- *                      type: object
- *                      properties:
- *                          username:
- *                              type: string
- *      responses:
- *          200:
- *              description: Username changed
- *          400:
- *              description: User not found
- *          500:
- *              description: Internal Server Error
- */
-router.put("/:id/change/username", verifyToken, changeUsername);
-
-/**
- * @swagger
  * /api/users/{id}/change/email:
  *  put:
  *      summary: Change email of a user by id.
@@ -256,7 +231,8 @@ router.put("/:id/change/username", verifyToken, changeUsername);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *        content:
  *           application/json:
@@ -286,7 +262,8 @@ router.put("/:id/change/email", verifyToken, changeEmail);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *        content:
  *           application/json:
@@ -309,14 +286,15 @@ router.put("/:id/change/mobile", verifyToken, changePhone);
  * @swagger
  * /api/users/search/{keyword}:
  *  get:
- *      summary: Search users by keyword in (fullname, username, mobile_no, email).
+ *      summary: Search users by keyword in (fullname, mobile_no, email).
  *      tags:
  *          -   User endpoints
  *      parameters:
  *          -   name: keyword
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Users found

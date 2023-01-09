@@ -14,6 +14,7 @@ const {
   getRoomsByResources,
   getRoomsBySeatsType,
 } = require("../controllers/rooms.controllers");
+const { verifyUserRole, verifyToken } = require("../middlewares/authJWT.middleware");
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ const router = express.Router();
  *      summary: Request all rooms.
  *      tags:
  *          - Rooms endpoints
+ *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -69,52 +71,50 @@ router.get("/:id", getRoomById);
  *      Room:
  *          type: object
  *          required:
- *              - room_room_name
+ *              - room_name
  *              - room_building
  *              - room_floor
  *              - room_type
- *              - room_capacity
- *              - room_seats_arrangement
+ *              - capacity
  *              - room_resources
- *              - has_fixed_seats
  *          properties:
  *              room_name:
  *                  type: string
  *                  description: Name of the room
+ *              room_description:
+ *                  type: string
+ *                  description: Description of the room
  *              room_building:
  *                  type: string
- *                  description: Name of the building
+ *                  description: building reference (use the buildings endpoint to get the id)
  *              room_floor:
- *                  type: string
- *                  description: Name of the floor
+ *                  type: number
+ *                  description: floor number (0=ground floor,1=first floor, etc.)
  *              room_type:
  *                  type: string
- *                  description: Type of the room
- *              room_capacity:
+ *                  description: Type of the room (use the room types endpoint to get the id)
+ *              capacity:
  *                  type: integer
  *                  description: Capacity of the room
- *              room_seats_arrangement:
- *                  type: array
- *                  items:
- *                      type: number
- *                  description: Seats arrangement of the room
  *              has_fixed_seats:
  *                  type: boolean
- *                  description: If the room has fixed seats
- *              room_coordinates:
+ *                  description: If the room has fixed seats (true | false)
+ *              resources:
  *                  type: array
- *                  items:
- *                      type: number
- *                  description: Coordinates of the room
+ *                  description: List of resources that the room has
+ *              responsible:
+ *                  type: string
+ *                  description: Someone who is responsible for a certain room (use the users endpoint to get the id)
  *          example:
  *                  room_name: "P001"
+ *                  room_description: "Room can be used or classes, conference and other events"
  *                  room_building: "63682d0710000a7041ae5aac"
- *                  room_floor: "Ground Floor"
+ *                  room_floor: 0
  *                  room_type: "6368bc27a3c65b114194fd94"
- *                  room_capacity: 120 
- *                  room_seats_arrangement: [60, 20]
+ *                  capacity: 120
  *                  has_fixed_seats: true
- *                  room_coordinates: [0, 0]
+ *                  resources: ["projector", "speakers"]
+ *                  responsible: "6368bc27a3c65b114194fd94"
  */
 
 /**
@@ -144,6 +144,6 @@ router.get("/:id", getRoomById);
  *          404:
  *              description: Not found
  */
-router.post("/create", createRoom);
+router.post("/create", verifyToken, verifyUserRole, createRoom);
 
 module.exports = router;

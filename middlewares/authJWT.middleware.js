@@ -1,5 +1,7 @@
 // add middleware functions
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
+const RolesModel = require("../models/Roles.model");
 const { RSU_SECRET } = process.env;
 
 // verify token
@@ -18,13 +20,26 @@ exports.verifyToken = async (req, res, next) => {
 };
 
 // verify user role
-exports.verifyUserRole = (req, res, next) => {
+exports.verifyUserRole = async (req, res, next) => {
+  console.log(req.userData);
   try {
     // get user role from request
     const userRole = req.userData.userRole;
+
+    // find by id
+    const role = await RolesModel.findById({
+      _id: mongoose.Types.ObjectId(userRole),
+    }).catch((err) => {
+      res.status(400).json({ message: "Invalid role id", error: err.message });
+    });
+
+    // get role tile of role retrieved
+    const roleTitle = role.role_name;
     // check if user role is admin
-    if (userRole !== "admin") {
-      return res.status(401).json({ message: "Auth failed" });
+    if (roleTitle !== "Admin" && roleTitle !== "AssetsM") {
+      return res
+        .status(401)
+        .json({ message: "Not authorized to create a room" });
     }
     next();
   } catch (error) {

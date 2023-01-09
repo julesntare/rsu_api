@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
+const BuildingsModel = require("../models/Buildings.model");
 const RoomModel = require("../models/Rooms.model");
+const RoomTypesModel = require("../models/RoomTypes.model");
+const UsersModel = require("../models/Users.model");
 
 exports.getAllRooms = async (_req, res) => {
   RoomModel.find({
@@ -26,19 +29,48 @@ exports.createRoom = async (req, res) => {
     });
   }
 
+  // check if building id, room_type, responsible are available
+  const building = await BuildingsModel.findById({
+    _id: mongoose.Types.ObjectId(req.body.room_building),
+  }).catch((err) => {
+    res
+      .status(400)
+      .json({ message: "Invalid building id", error: err.message });
+  });
+
+  const roomType = await RoomTypesModel.findById({
+    _id: mongoose.Types.ObjectId(req.body.room_type),
+  }).catch((err) => {
+    res
+      .status(400)
+      .json({ message: "Invalid room type id", error: err.message });
+  });
+
+  const responsible = await UsersModel.findById({
+    _id: mongoose.Types.ObjectId(req.body.responsible),
+  }).catch((err) => {
+    res
+      .status(400)
+      .json({ message: "Invalid responsible id", error: err.message });
+  });
+
+  if (!building || !roomType || !responsible) {
+    return res.status(400).json({
+      message: "Invalid building, room type or responsible user",
+    });
+  }
+
   const newRoom = new RoomModel({
     room_name: req.body.room_name,
     room_description: req.body.room_description,
     room_type: req.body.room_type,
     room_building: req.body.room_building,
     room_floor: req.body.room_floor,
-    room_capacity: req.body.room_capacity,
-    room_seats_arrangement: req.body.room_seats_arrangement,
-    room_resources: req.body.room_resources,
+    capacity: req.body.capacity,
+    resources: req.body.resources,
     has_fixed_seats: req.body.has_fixed_seats,
-    room_coordinates: req.body.room_coordinates,
+    responsible: req.body.responsible,
     added_on: Date.now(),
-    status: req.body.status,
   });
 
   newRoom
