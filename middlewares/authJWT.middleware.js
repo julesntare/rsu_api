@@ -13,6 +13,17 @@ exports.verifyToken = async (req, res, next) => {
     const decoded = jwt.verify(token, RSU_SECRET);
     // if token is valid
     req.userData = decoded;
+
+    // find by id
+    const role = await RolesModel.findById({
+      _id: mongoose.Types.ObjectId(req.userData.userRole),
+    }).catch((err) => {
+      res.status(400).json({ message: "Invalid role id", error: err.message });
+    });
+
+    // get role tile of role retrieved
+    const roleTitle = role.role_name;
+    req.roleTitle = roleTitle;
     next();
   } catch (error) {
     res.status(401).json({ message: "Auth failed" });
@@ -22,23 +33,28 @@ exports.verifyToken = async (req, res, next) => {
 // verify user role
 exports.verifyUserRole = async (req, res, next) => {
   try {
-    // get user role from request
-    const userRole = req.userData.userRole;
-
-    // find by id
-    const role = await RolesModel.findById({
-      _id: mongoose.Types.ObjectId(userRole),
-    }).catch((err) => {
-      res.status(400).json({ message: "Invalid role id", error: err.message });
-    });
-
-    // get role tile of role retrieved
-    const roleTitle = role.role_name;
-    // check if user role is admin
+    const roleTitle = req.roleTitle;
+    // check if user role is admin or assets manager
     if (roleTitle !== "Admin" && roleTitle !== "AssetsM") {
       return res
         .status(401)
-        .json({ message: "Not authorized to create a room" });
+        .json({ message: "Not authorized to alteration of rooms or buildings" });
+    }
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Auth failed" });
+  }
+};
+
+// verify user role
+exports.verifySchedulers = async (req, res, next) => {
+  try {
+    const roleTitle = req.roleTitle;
+    // check if user role is admin or assets manager
+    if (roleTitle !== "Admin" && roleTitle !== "Scheduler") {
+      return res
+        .status(401)
+        .json({ message: "Not authorized to alteration of timetable" });
     }
     next();
   } catch (error) {
@@ -50,9 +66,28 @@ exports.verifyUserRole = async (req, res, next) => {
 exports.verifyUser = (req, res, next) => {
   try {
     // get user role from request
-    const userRole = req.userData.userRole;
+    const roleTitle = req.roleTitle;
+    // check if user role is contributors, Scheduler, Admin or AssetsM
+    if (
+      roleTitle !== "Contributors" &&
+      roleTitle !== "Scheduler" &&
+      roleTitle !== "Admin" &&
+      roleTitle !== "AssetsM"
+    ) {
+      return res.status(401).json({ message: "Auth failed" });
+    }
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Auth failed" });
+  }
+};
+
+exports.verifyAdmin = (req, res, next) => {
+  try {
+    // get user role from request
+    const roleTitle = req.roleTitle;
     // check if user role is admin
-    if (userRole !== "Contributors") {
+    if (roleTitle !== "Admin") {
       return res.status(401).json({ message: "Auth failed" });
     }
     next();

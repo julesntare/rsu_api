@@ -3,9 +3,8 @@ const {
   getAllBookings,
   getBookingById,
   createBooking,
-  updateBooking,
-  deleteBooking,
 } = require("../controllers/bookings.controllers");
+const { verifyToken, verifyUser } = require("../middlewares/authJWT.middleware");
 
 const router = express.Router();
 
@@ -126,6 +125,6 @@ router.get("/:id", getBookingById);
  *          500:
  *              description: Internal server error
  */
-router.post("/create", createBooking);
+router.post("/create", verifyToken, verifyUser, createBooking);
 
 module.exports = router;

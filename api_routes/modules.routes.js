@@ -1,5 +1,6 @@
 const express = require("express");
 const { getAllModules, getModuleById, createModule, changeModuleStatus, updateModule, changeModuleDepartment, removeModule } = require("../controllers/modules.controllers");
+const { verifyToken, verifyAdmin, verifySchedulers } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -31,7 +32,8 @@ router.get("/", getAllModules);
  *          -   name: id
  *              in: path
  *              required: true
- *              description: Module id
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Success
@@ -105,7 +107,7 @@ router.get("/:id", getModuleById);
  *          500:
  *              description: Internal Server Error
  */
-router.post("/create", createModule);
+router.post("/create", verifyToken, verifySchedulers, createModule);
 
 /**
  * @swagger
@@ -118,7 +120,8 @@ router.post("/create", createModule);
  *          -   name: id
  *              in: path
  *              required: true
- *              description: Module Id
+ *              schema:
+ *                  type: string
  *      produces:
  *          application/json
  *      requestBody:
@@ -135,7 +138,7 @@ router.post("/create", createModule);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/update/:id", updateModule);
+router.put("/update/:id", verifyToken, verifySchedulers, updateModule);
 
 /**
  * @swagger
@@ -148,7 +151,8 @@ router.put("/update/:id", updateModule);
  *          -   name: id
  *              in: path
  *              required: true
- *              description: Module Id
+ *              schema:
+ *                  type: string
  *      produces:
  *          application/json
  *      requestBody:
@@ -168,7 +172,7 @@ router.put("/update/:id", updateModule);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/change/status/:id", changeModuleStatus);
+router.put("/change/status/:id", verifyToken, verifySchedulers, changeModuleStatus);
 
 /**
  * @swagger
@@ -181,7 +185,8 @@ router.put("/change/status/:id", changeModuleStatus);
  *          -   name: id
  *              in: path
  *              required: true
- *              description: Module Id
+ *              schema:
+ *                  type: string
  *      produces:
  *          application/json
  *      requestBody:
@@ -201,7 +206,7 @@ router.put("/change/status/:id", changeModuleStatus);
  *          500:
  *              description: Internal Server Error
  */
- router.put("/change/status/:id", changeModuleDepartment);
+ router.put("/change/status/:id", verifyToken, verifySchedulers, changeModuleDepartment);
 
 /**
  * @swagger
@@ -211,10 +216,11 @@ router.put("/change/status/:id", changeModuleStatus);
  *     tags:
  *         -   Modules
  *     parameters:
- *         -   name: id
- *             in: path
- *             require: true
- *             description: Module Id
+ *         -    name: id
+ *              in: path
+ *              require: true
+ *              schema:
+ *                  type: string
  *     responses:
  *          204:
  *              description: Success
@@ -223,6 +229,6 @@ router.put("/change/status/:id", changeModuleStatus);
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/remove/:id", removeModule);
+router.delete("/remove/:id", verifyToken, verifySchedulers, removeModule);
 
 module.exports = router;

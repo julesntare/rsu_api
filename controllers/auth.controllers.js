@@ -13,9 +13,9 @@ exports.register = async (req, res) => {
   try {
     // check if user already exists
     const user = await UsersModel.findOne({ email: req.body.email });
-    console.log(user);
+
     if (user) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists", statusCode: 400 });
     }
     // hash password
     const salt = await bcrypt.genSalt(10);
@@ -32,9 +32,9 @@ exports.register = async (req, res) => {
     });
     // save user and return response
     const userResult = await newUser.save();
-    res.status(201).json({ message: "User created successfully", userResult });
+    res.status(201).json({ message: "User created successfully", userResult, statusCode: 201 });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message, statusCode: 500 });
   }
 };
 

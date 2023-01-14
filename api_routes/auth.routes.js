@@ -1,6 +1,6 @@
 const express = require("express");
 const { login, register, logout } = require("../controllers/auth.controllers");
-const { verifyToken } = require("../middlewares/authJWT.middleware");
+const { verifyToken, verifyAdmin } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -95,7 +95,6 @@ router.post("/login", login);
  *      summary: Register a new user.
  *      tags:
  *          - Auth endpoints
- *      security: []
  *      produces:
  *          - application/json
  *      parameters: []
@@ -118,7 +117,7 @@ router.post("/login", login);
  *          401:
  *              description: Unauthorized
  */
-router.post("/register", register);
+router.post("/register", verifyToken, verifyAdmin, register);
 
 /**
  * @swagger

@@ -6,6 +6,7 @@ const {
     removeRoomType,
     modifyRoomType,
 } = require("../controllers/roomTypes.controllers");
+const { verifyUserRole, verifyToken } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -37,7 +38,8 @@ router.get("/all", getAllRoomTypes);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Returned details for specified roomType (json format)
@@ -90,7 +92,7 @@ router.get("/:id", getRoomTypeById);
  *          500:
  *              description: Internal Server Error
  */
-router.post("/create", createRoomType);
+router.post("/create", verifyToken, verifyUserRole, createRoomType);
 
 /**
  * @swagger
@@ -103,7 +105,8 @@ router.post("/create", createRoomType);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          204:
  *              description: RoomType deleted
@@ -112,7 +115,7 @@ router.post("/create", createRoomType);
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/:id", removeRoomType);
+router.delete("/:id", verifyToken, verifyUserRole, removeRoomType);
 
 /**
  * @swagger
@@ -127,7 +130,8 @@ router.delete("/:id", removeRoomType);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -141,6 +145,6 @@ router.delete("/:id", removeRoomType);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/modify/:id", modifyRoomType);
+router.put("/modify/:id", verifyToken, verifyUserRole, modifyRoomType);
 
 module.exports = router;

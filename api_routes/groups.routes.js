@@ -8,6 +8,7 @@ const {
     changeGroupDepartment,
     removeGroup
 } = require("../controllers/groups.controllers");
+const { verifyToken, verifyAdmin } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -39,7 +40,8 @@ router.get("/all", getAllGroups);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Returned details for specified group (json format)
@@ -94,7 +96,6 @@ router.get("/:id", getGroupById);
  *      summary: Create a new group.
  *      tags:
  *          - Group endpoints
- *      security: []
  *      produces:
  *          - application/json
  *      parameters: []
@@ -115,6 +116,6 @@ router.get("/:id", getGroupById);
  *          401:
  *              description: Unauthorized
  */
-router.post("/create", createGroup);
+router.post("/create", verifyToken, verifyAdmin, createGroup);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
-const { verifyToken } = require("../middlewares/authJWT.middleware");
+const { verifyToken, verifySchedulers } = require("../middlewares/authJWT.middleware");
 const {
   removeEmptyColumns,
   uploadCSV,
@@ -27,7 +27,6 @@ const upload = multer({ storage });
  *      summary: Upload a CSV file.
  *      tags:
  *          - CSV endpoints
- *      security: []
  *      requestBody:
  *          content:
  *              multipart/form-data:
@@ -45,7 +44,7 @@ const upload = multer({ storage });
  *          500:
  *              description: Internal server error
  */
-router.post("/upload", upload.single("file"), uploadCSV);
+router.post("/upload", upload.single("file"), verifyToken, verifySchedulers, uploadCSV);
 
 /**
  * @swagger
@@ -54,7 +53,6 @@ router.post("/upload", upload.single("file"), uploadCSV);
  *      summary: Remove empty columns from CSV file.
  *      tags:
  *          - CSV endpoints
- *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -64,7 +62,7 @@ router.post("/upload", upload.single("file"), uploadCSV);
  *          500:
  *              description: Internal server error
  */
-router.put("/removeEmptyColumns", removeEmptyColumns);
+router.put("/removeEmptyColumns", verifyToken, verifySchedulers, removeEmptyColumns);
 
 /**
  * @swagger
@@ -73,7 +71,6 @@ router.put("/removeEmptyColumns", removeEmptyColumns);
  *      summary: Get data from CSV file.
  *      tags:
  *          - CSV endpoints
- *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -83,7 +80,7 @@ router.put("/removeEmptyColumns", removeEmptyColumns);
  *          500:
  *              description: Internal server error
  */
-router.get("/getData", getCSVData);
+router.get("/getData", verifyToken, verifySchedulers, getCSVData);
 
 /**
  * @swagger
@@ -92,7 +89,6 @@ router.get("/getData", getCSVData);
  *      summary: Push data from uploaded CSV file to DB.
  *      tags:
  *        - CSV endpoints
- *      security: []
  *      parameters: []
  *      responses:
  *        200:
@@ -108,6 +104,6 @@ router.get("/getData", getCSVData);
  *        404:
  *          description: Not found
  */
-router.post("/pushToDB", pushJSONDataToDB);
+router.post("/pushToDB", verifyToken, verifySchedulers, pushJSONDataToDB);
 
 module.exports = router;

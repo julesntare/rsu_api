@@ -7,7 +7,7 @@ const {
   modifyBuilding,
 } = require("../controllers/building.controllers");
 const router = express.Router();
-const { verifyToken } = require("../middlewares/authJWT.middleware");
+const { verifyToken, verifyUserRole } = require("../middlewares/authJWT.middleware");
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.get("/:id", getBuildingById);
  *        500:
  *          description: Internal Server Error
  */
-router.post("/", verifyToken, createBuilding);
+router.post("/", verifyToken, verifyUserRole, createBuilding);
 
 /**
  * @swagger
@@ -122,12 +122,13 @@ router.post("/", verifyToken, createBuilding);
  *  delete:
  *    summary: Delete a building by id.
  *    tags:
- *      - Building endpoints
+ *      -   Building endpoints
  *    parameters:
  *      -   name: id
  *          in: path
  *          required: true
- *          type: string
+ *          schema:
+ *            type: string
  *    responses:
  *      200:
  *        description: Success
@@ -136,7 +137,7 @@ router.post("/", verifyToken, createBuilding);
  *      500:
  *        description: Internal server error
  */
-router.delete("/remove/:id", verifyToken, removeBuilding);
+router.delete("/remove/:id", verifyToken, verifyUserRole, removeBuilding);
 
 /**
  * @swagger
@@ -168,6 +169,6 @@ router.delete("/remove/:id", verifyToken, removeBuilding);
  *        404:
  *            description: Building not found
  */
-router.put("/modify/:id", verifyToken, modifyBuilding);
+router.put("/modify/:id", verifyToken, verifyUserRole, modifyBuilding);
 
 module.exports = router;

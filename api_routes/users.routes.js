@@ -1,7 +1,7 @@
 const express = require("express");
 const { getAllUsers, getUserById, getUserByRole, updateUser, deleteUser, changeStatus, changePassword, changeRole, changeEmail, changePhone, searchUserByAny } = require("../controllers/users.controllers");
 const router = express.Router();
-const { verifyToken } = require("../middlewares/authJWT.middleware");
+const { verifyToken, verifyUser, verifyAdmin } = require("../middlewares/authJWT.middleware");
 
 /**
  * @swagger
@@ -19,7 +19,7 @@ const { verifyToken } = require("../middlewares/authJWT.middleware");
  *          500:
  *              description: Internal server error
  */
-router.get("/all", verifyToken, getAllUsers);
+router.get("/all", verifyToken, verifyUser, getAllUsers);
 
 /**
  * @swagger
@@ -42,7 +42,7 @@ router.get("/all", verifyToken, getAllUsers);
  *          500:
  *              description: Internal Server Error
  */
-router.get("/:id", verifyToken, getUserById);
+router.get("/:id", verifyToken, verifyUser, getUserById);
 
 /**
  * @swagger
@@ -65,7 +65,7 @@ router.get("/:id", verifyToken, getUserById);
  *          500:
  *              description: Internal Server Error
  */
-router.get("/role/:role", verifyToken, getUserByRole);
+router.get("/role/:role", verifyToken, verifyUser, getUserByRole);
 
 /**
  * @swagger
@@ -98,7 +98,7 @@ router.get("/role/:role", verifyToken, getUserByRole);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/update/:id", verifyToken, updateUser);
+router.put("/update/:id", verifyToken, verifyAdmin, updateUser);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.put("/update/:id", verifyToken, updateUser);
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/delete/:id", verifyToken, deleteUser);
+router.delete("/delete/:id", verifyToken, verifyAdmin, deleteUser);
 
 /**
  * @swagger
@@ -156,7 +156,7 @@ router.delete("/delete/:id", verifyToken, deleteUser);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/change/password/:id", verifyToken, changePassword);
+router.put("/change/password/:id", verifyToken, verifyUser, changePassword);
 
 /**
  * @swagger
@@ -187,7 +187,7 @@ router.put("/change/password/:id", verifyToken, changePassword);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/role", verifyToken, changeRole);
+router.put("/:id/change/role", verifyToken, verifyAdmin, changeRole);
 
 /**
  * @swagger
@@ -218,7 +218,7 @@ router.put("/:id/change/role", verifyToken, changeRole);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/status", verifyToken, changeStatus);
+router.put("/:id/change/status", verifyToken, verifyUser, changeStatus);
 
 /**
  * @swagger
@@ -249,7 +249,7 @@ router.put("/:id/change/status", verifyToken, changeStatus);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/email", verifyToken, changeEmail);
+router.put("/:id/change/email", verifyToken, verifyUser, changeEmail);
 
 /**
  * @swagger
@@ -280,7 +280,7 @@ router.put("/:id/change/email", verifyToken, changeEmail);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/mobile", verifyToken, changePhone);
+router.put("/:id/change/mobile", verifyToken, verifyUser, changePhone);
 
 /**
  * @swagger
@@ -303,6 +303,6 @@ router.put("/:id/change/mobile", verifyToken, changePhone);
  *          500:
  *              description: Internal Server Error
  */ 
-router.get("/search/:keyword", verifyToken, searchUserByAny);
+router.get("/search/:keyword", verifyToken, verifyUser, searchUserByAny);
 
 module.exports = router;

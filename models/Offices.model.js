@@ -45,6 +45,7 @@ const OfficesSchema = new mongoose.Schema({
   coordinates: {
     type: Array,
     required: false,
+    default: [0, 0],
     validate: {
       validator: function (v) {
         // validate array of lat and long coordinates

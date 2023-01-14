@@ -1,13 +1,14 @@
 const express = require("express");
 const {
-    getAllRoles,
-    getRoleById,
-    createRole,
-    removeRole,
-    updateRole,
+  getAllRoles,
+  getRoleById,
+  createRole,
+  removeRole,
+  updateRole,
 } = require("../controllers/roles.controllers");
 const {
-    verifyToken,
+  verifyToken,
+  verifyAdmin,
 } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
@@ -78,8 +79,6 @@ router.get("/:id", getRoleById);
  *      summary: Create a new role.
  *      tags:
  *          -   Role endpoints
- *      security:
- *          -   bearerAuth: []
  *      produces:
  *          -   application/json
  *      parameters: []
@@ -96,7 +95,7 @@ router.get("/:id", getRoleById);
  *          500:
  *              description: Internal server error
  */
-router.post("/create", verifyToken, createRole);
+router.post("/create", verifyToken, verifyAdmin, createRole);
 
 /**
  * @swagger
@@ -119,7 +118,7 @@ router.post("/create", verifyToken, createRole);
  *          500:
  *              description: Internal server error
  */
-router.delete("/:id", removeRole);
+router.delete("/:id", verifyToken, verifyAdmin, removeRole);
 
 /**
  * @swagger
@@ -149,6 +148,6 @@ router.delete("/:id", removeRole);
  *          500:
  *              description: Internal server error
  */
-router.put("/:id", updateRole);
+router.put("/:id", verifyToken, verifyAdmin, updateRole);
 
 module.exports = router;

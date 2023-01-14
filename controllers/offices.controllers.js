@@ -85,7 +85,7 @@ exports.createOffice = async (req, res) => {
     office_type: req.body.office_type,
     office_building_location: req.body.office_building_location,
     building_floor: req.body.building_floor,
-    coordinates: req.body.coordinates,
+    coordinates: req.body.coordinates || [0, 0],
     capacity: req.body.capacity,
     responsible: req.body.responsible,
     working_days: req.body.working_days,

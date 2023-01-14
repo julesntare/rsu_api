@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllDepartments, getDepartmentById, createDepartment, changeDepartmentStatus, changeDepartmentHead, changeDepartmentNearLocations, changeDepartmentOfficeCoordinates, removeDepartment } = require("../controllers/department.controllers");
-const { verifyToken } = require("../middlewares/authJWT.middleware");
+const { verifyToken, verifyAdmin, verifyUser } = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -32,7 +32,8 @@ router.get("/all", getAllDepartments);
  *        -     name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *         200:
  *              description: Returned details for specified department (json format)
@@ -50,8 +51,6 @@ router.get("/:id", getDepartmentById);
  *      summary: Create a new department.
  *      tags:
  *          - Department endpoints
- *      security:
- *          -   bearerAuth: []
  *      produces:
  *          -   application/json
  *      parameters: []
@@ -68,7 +67,7 @@ router.get("/:id", getDepartmentById);
  *          500:
  *              description: Internal server error
  */
-router.post("/create", verifyToken, createDepartment);
+router.post("/create", verifyToken, verifyAdmin, createDepartment);
 
 /**
  * @swagger
@@ -81,7 +80,8 @@ router.post("/create", verifyToken, createDepartment);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -98,7 +98,7 @@ router.post("/create", verifyToken, createDepartment);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/status", changeDepartmentStatus);
+router.put("/:id/change/status", verifyToken, verifyAdmin, changeDepartmentStatus);
 
 /**
  * @swagger
@@ -111,7 +111,8 @@ router.put("/:id/change/status", changeDepartmentStatus);
  *         -    name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -128,7 +129,7 @@ router.put("/:id/change/status", changeDepartmentStatus);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/head", changeDepartmentHead);
+router.put("/:id/change/head", verifyToken, verifyAdmin, changeDepartmentHead);
 
 /**
  * @swagger
@@ -141,7 +142,8 @@ router.put("/:id/change/head", changeDepartmentHead);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -160,7 +162,7 @@ router.put("/:id/change/head", changeDepartmentHead);
  *          500:
  *            description: Internal Server Error
  */
-router.put("/:id/change/office_coordinates", changeDepartmentOfficeCoordinates);
+router.put("/:id/change/office_coordinates", verifyToken, verifyUser, changeDepartmentOfficeCoordinates);
 
 /**
  * @swagger
@@ -173,7 +175,8 @@ router.put("/:id/change/office_coordinates", changeDepartmentOfficeCoordinates);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      requestBody:
  *          content:
  *              application/json:
@@ -192,7 +195,7 @@ router.put("/:id/change/office_coordinates", changeDepartmentOfficeCoordinates);
  *          500:
  *            description: Internal Server Error
  */
-router.put("/:id/change/near_locations", changeDepartmentNearLocations);
+router.put("/:id/change/near_locations", verifyToken, verifyUser, changeDepartmentNearLocations);
 
 /**
  * @swagger
@@ -205,7 +208,8 @@ router.put("/:id/change/near_locations", changeDepartmentNearLocations);
  *          -   name: id
  *              in: path
  *              required: true
- *              type: string
+ *              schema:
+ *                  type: string
  *      responses:
  *          200:
  *              description: Department Deleted
@@ -214,6 +218,6 @@ router.put("/:id/change/near_locations", changeDepartmentNearLocations);
  *          500:
  *              description: Internal Server Error
  */
-router.delete("/:id", removeDepartment);
+router.delete("/:id", verifyToken, verifyAdmin, removeDepartment);
 
 module.exports = router;

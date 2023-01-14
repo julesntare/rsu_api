@@ -71,7 +71,6 @@ router.get("/:id", getOfficeById);
  *              - office_type
  *              - working_days
  *              - working_hours
- *              - coordinates
  *          properties:
  *              office_name:
  *                  type: string
