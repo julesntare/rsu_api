@@ -27,7 +27,7 @@ exports.getAllOffices = async (_req, res) => {
 
         return {
           ...o._doc,
-          office_building: building,
+          office_building_location: building,
           responsible: responsible,
         };
       });
