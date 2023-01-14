@@ -64,12 +64,12 @@ const BuildingsSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["active", "disabled", "terminated"],
+    enum: ["active", "inactive", "terminated"],
     required: false,
     default: "active",
     validate: {
       validator: function (v) {
-        return /^(active|disabled|terminated)$/.test(v);
+        return /^(active|inactive|terminated)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
     }

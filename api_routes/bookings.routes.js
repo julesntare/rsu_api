@@ -1,10 +1,10 @@
 const express = require("express");
 const {
-    getAllBookings,
-    getBookingById,
-    createBooking,
-    updateBooking,
-    deleteBooking,
+  getAllBookings,
+  getBookingById,
+  createBooking,
+  updateBooking,
+  deleteBooking,
 } = require("../controllers/bookings.controllers");
 
 const router = express.Router();
@@ -59,12 +59,16 @@ router.get("/:id", getBookingById);
  *      type: object
  *      required:
  *          - user_id
+ *          - all_authorized
  *          - activity
  *          - room
  *      properties:
  *          user_id:
  *              type: string
  *              description: User id
+ *          all_authorized:
+ *              type: array
+ *              description: All Authorized users in array or empty array if no other
  *          activity:
  *              type: object
  *              description: Activity object
@@ -76,6 +80,7 @@ router.get("/:id", getBookingById);
  *              description: Additional info
  *      example:
  *          user_id: 6377aadcd6eef3f0c06c166d
+ *          all_authorized: ["6377aadcd6eef3f0c06c166d", "6377aadcd6eef3f0c06c166d"]
  *          activity: {
  *              activity_name: "Learning",
  *              activity_description: "Learning python in usual class",
@@ -84,6 +89,7 @@ router.get("/:id", getBookingById);
  *              activity_ending_date: "2023-01-04",
  *              activity_days: [1, 3],
  *              activity_time: [["10:00", "11:00"], ["12:00", "13:00"]],
+ *              activity_meeting_link: "https://meet.google.com/lookup/abc123"
  *              }
  *          room: 63b299af8d89c14fb437f073
  *          additional_info: "we are requesting for panel seats"
@@ -98,7 +104,8 @@ router.get("/:id", getBookingById);
  *          The request body must be in json format and must contain the following fields:<br/>
  *          <b>user_id</b> (<i>as a reference ID</i>), <b>activity</b> (<i>as a json object</i>), <b>room</b> (<i>as a reference ID</i>), <b>additional_info</b>(<i>optional</i>).<br/><br/>
  *         For activity object, the following fields must be set as follows:<br/>
- *          <b>activity_name</b><i> is required</i><br/><b>activity_description</b><i> is optional</i><br/><b>activity_starting_date</b><i> is required</i><br/>          <b>activity_ending_date</b><i> is required</i><br/><b>activity_days</b><i> is required only when activity_recurrence is set to <b>weekly, monthly or certain_days</b>, and it must be an array of single or multiple days in numbers.(i.e., [1,2,...,7])</i><br/><b>activity_time</b> <i>is required and it must be an array of single or multiple times in allowed format.(i.e., [[start_time, end_time],...] like [[08:00, 11:00], [14:00, 17:00]]) or a single day range schedules</i><br/>        <b>activity_recurrence</b> is required and is enum of pre-defined texts(i.e. once | weekly | monthly | certain_days).<br/><br/>"
+ *          <b>activity_name</b><i> is required</i><br/><b>activity_description</b><i> is optional</i><br/><b>activity_starting_date</b><i> is required</i><br/>          <b>activity_ending_date</b><i> is required</i><br/><b>activity_days</b><i> is required only when activity_recurrence is set to <b>weekly, monthly or certain_days</b>, and it must be an array of single or multiple days in numbers.(i.e., [1,2,...,7])</i><br/><b>activity_time</b> <i>is required and it must be an array of single or multiple times in allowed format.(i.e., [[start_time, end_time],...] like [[08:00, 11:00], [14:00, 17:00]]) or a single day range schedules</i><br/>        <b>activity_recurrence</b> is required and is enum of pre-defined texts(i.e. once | weekly | monthly | certain_days).<br/>
+ *          <b>activity_online_link</b><i> is optional</i><br/>"
  *      tags:
  *         - Booking endpoints
  *      produces:

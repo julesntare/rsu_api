@@ -77,6 +77,13 @@ exports.createBooking = async (req, res) => {
   if (req.body.activity.activity_recurrence === "once") {
     recurring_date.push({
       user_id: req.body.user_id,
+      all_authorized:
+        req.body.all_authorized === undefined ||
+        req.body.all_authorized.length === 0
+          ? [req.body.user_id]
+          : req.body.all_authorized.includes(req.body.user_id)
+          ? req.body.all_authorized
+          : [req.body.user_id, ...req.body.all_authorized],
       activity: {
         ...req.body.activity,
         activity_days: null,
@@ -101,9 +108,16 @@ exports.createBooking = async (req, res) => {
         j <= activityEndingDate;
         j.setDate(j.getDate() + 7)
       ) {
-        if(j.getDay() != activityDays[i]) continue;
+        if (j.getDay() != activityDays[i]) continue;
         recurring_date.push({
           user_id: req.body.user_id,
+          all_authorized:
+            req.body.all_authorized === undefined ||
+            req.body.all_authorized.length === 0
+              ? [req.body.user_id]
+              : req.body.all_authorized.includes(req.body.user_id)
+              ? req.body.all_authorized
+              : [req.body.user_id, ...req.body.all_authorized],
           activity: {
             ...req.body.activity,
             activity_days: activityDays[i],
@@ -132,6 +146,13 @@ exports.createBooking = async (req, res) => {
       ) {
         recurring_date.push({
           user_id: req.body.user_id,
+          all_authorized:
+            req.body.all_authorized === undefined ||
+            req.body.all_authorized.length === 0
+              ? [req.body.user_id]
+              : req.body.all_authorized.includes(req.body.user_id)
+              ? req.body.all_authorized
+              : [req.body.user_id, ...req.body.all_authorized],
           activity: {
             ...req.body.activity,
             activity_days: activityDays[i],
@@ -160,6 +181,13 @@ exports.createBooking = async (req, res) => {
       ) {
         recurring_date.push({
           user_id: req.body.user_id,
+          all_authorized:
+            req.body.all_authorized === undefined ||
+            req.body.all_authorized.length === 0
+              ? [req.body.user_id]
+              : req.body.all_authorized.includes(req.body.user_id)
+              ? req.body.all_authorized
+              : [req.body.user_id, ...req.body.all_authorized],
           activity: {
             ...req.body.activity,
             activity_days: activityDays[i],

@@ -3,6 +3,7 @@ const UsersModel = require("../models/Users.model");
 const sessionsModel = require("../models/Sessions.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const RolesModel = require("../models/Roles.model");
 
 // express, jwt and mongoose user authentication
 const { RSU_SECRET } = process.env;
@@ -12,6 +13,7 @@ exports.register = async (req, res) => {
   try {
     // check if user already exists
     const user = await UsersModel.findOne({ email: req.body.email });
+    console.log(user);
     if (user) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -56,9 +58,14 @@ exports.login = async (req, res) => {
     }
     // if password matched
     // create a token
-    const token = jwt.sign({ user: user._id, userRole: user.user_role }, RSU_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ user: user._id, userRole: user.user_role }, RSU_SECRET, { expiresIn: "7 days" });
+
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });
+
+    // get role name from rolesModel by id
+    const role = await RolesModel.findById(user.user_role);
+
     // send token as response
     res.status(200).json({
       status: 200,
@@ -68,7 +75,7 @@ exports.login = async (req, res) => {
         title: user.title,
         email: user.email,
         mobile_no: user.mobile_no,
-        user_role: user.user_role,
+        user_role: role.role_name,
       },
       token,
     });

@@ -8,7 +8,43 @@ exports.getAllRooms = async (_req, res) => {
   RoomModel.find({
     status: "active",
   })
-    .then((room) => res.status(200).json(room))
+    .then((room) => {
+      // get all info on each room_building, responsible, and room_type
+      const promises = room.map(async (r) => {
+        const building = await Buildings.findById(
+          mongoose.Types.ObjectId(r.room_building)
+        ).catch((err) => {
+          res
+            .status(400)
+            .json({ message: "Invalid building id", error: err.message });
+        });
+
+        const roomType = await RoomTypes.findById(
+          mongoose.Types.ObjectId(r.room_type)
+        ).catch((err) => {
+          res
+            .status(400)
+            .json({ message: "Invalid room type id", error: err.message });
+        });
+
+        const responsible = await Users.findById(
+          mongoose.Types.ObjectId(r.responsible)
+        ).catch((err) => {
+          res
+            .status(400)
+            .json({ message: "Invalid responsible id", error: err.message });
+        });
+
+        return {
+          ...r._doc,
+          room_building: building,
+          room_type: roomType,
+          responsible: responsible,
+        };
+      });
+
+      Promise.all(promises).then((results) => res.json(results));
+    })
     .catch((err) =>
       res.status(404).json({ message: "No Room not found", error: err.message })
     );

@@ -4,15 +4,6 @@ const {
   getAllRooms,
   getRoomById,
   createRoom,
-  removeRoom,
-  modifyRoom,
-  getRoomsByBuilding,
-  getRoomsByFloor,
-  getRoomsByType,
-  getRoomsByCapacity,
-  getRoomsBySeatsArrangement,
-  getRoomsByResources,
-  getRoomsBySeatsType,
 } = require("../controllers/rooms.controllers");
 const { verifyUserRole, verifyToken } = require("../middlewares/authJWT.middleware");
 
@@ -49,6 +40,9 @@ router.get("/all", getAllRooms);
  *      parameters:
  *          -   in: path
  *              name: id
+ *              required: true
+ *              schema:
+ *                 type: string
  *      schema:
  *          type: string
  *          required: true

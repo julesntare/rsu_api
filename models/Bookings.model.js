@@ -12,8 +12,26 @@ const BookingsSchema = new mongoose.Schema({
       validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid user reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid user reference format!`,
+    },
+  },
+  all_authorized: {
+    type: Array,
+    required: true,
+    reference: {
+      model: "Users",
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    validate: {
+      validator: function (v) {
+        return (
+          v.length === 0 || v.every((item) => /^[0-9a-fA-F]{24}$/.test(item))
+        );
+      },
+      message: (props) =>
+        `${props.value} is/are not valid user reference ids format!`,
+    },
   },
   activity: {
     type: Object,
@@ -28,7 +46,7 @@ const BookingsSchema = new mongoose.Schema({
           v.hasOwnProperty("activity_time") &&
           v.hasOwnProperty("activity_recurrence")
         );
-        },
+      },
       message: (props) => `${props.value} is not a valid activity object!`,
     },
   },
@@ -43,8 +61,9 @@ const BookingsSchema = new mongoose.Schema({
       validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid room reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid room reference format!`,
+    },
   },
   additional_info: {
     type: String,
@@ -60,11 +79,11 @@ const BookingsSchema = new mongoose.Schema({
     required: true,
     default: "pending",
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^(pending|confirmed|cancelled)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
-    }
+    },
   },
   // field to mention if from timetable or booking call it flag
   flag: {

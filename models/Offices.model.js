@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const RoomsSchema = new mongoose.Schema({
-  room_name: {
+const OfficesSchema = new mongoose.Schema({
+  office_name: {
     type: String,
     required: true,
     unique: true,
@@ -9,14 +9,14 @@ const RoomsSchema = new mongoose.Schema({
       validator: function (v) {
         return /^[a-zA-Z0-9 ]{3,30}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid room name!`,
+      message: (props) => `${props.value} is not a valid office name!`,
     },
   },
-  room_description: {
+  office_description: {
     type: String,
     required: false,
   },
-  room_building: {
+  office_building_location: {
     type: String,
     reference: {
       type: mongoose.Schema.Types.ObjectId,
@@ -31,7 +31,7 @@ const RoomsSchema = new mongoose.Schema({
         `${props.value} is not a valid building reference format!`,
     },
   },
-  room_floor: {
+  building_floor: {
     type: Number,
     required: true,
     validate: {
@@ -42,20 +42,18 @@ const RoomsSchema = new mongoose.Schema({
     },
     default: 0,
   },
-  capacity: {
-    type: Number,
+  coordinates: {
+    type: Array,
     required: false,
     validate: {
       validator: function (v) {
-        return /^[0-9]{2,}$/.test(v);
+        // validate array of lat and long coordinates
+        return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]$/.test(
+          JSON.stringify(v)
+        );
       },
-      message: (props) => `${props.value} is not a valid room capacity!`,
+      message: (props) => `${props.value} is not a valid office location!`,
     },
-  },
-  has_fixed_seats: {
-    type: Boolean,
-    required: true,
-    default: false,
   },
   responsible: {
     type: String,
@@ -72,24 +70,51 @@ const RoomsSchema = new mongoose.Schema({
         `${props.value} is not a valid room responsible reference format!`,
     },
   },
-  room_type: {
+  office_type: {
     type: String,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "RoomTypes",
-    },
+    enum: ["private", "shared", "open", "hot_desk"],
     required: true,
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+        return /^(private|shared|open|hot_desk)$/.test(v);
       },
       message: (props) =>
-        `${props.value} is not a valid room type reference format!`,
+        `${props.value} is not a valid office type! (private, shared, open, hot_desk)`,
     },
   },
-  resources: {
+  capacity: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /^[0-9]{1,2}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid office capacity!`,
+    },
+  },
+  working_days: {
     type: Array,
-    required: false,
+    required: true,
+    validate: {
+      validator: function (v) {
+        // use numbers 1 to 7 to represent days of the week
+        return /^\[(?:[1-7])(?:\,([1-7]))*\]$/.test(JSON.stringify(v));
+      },
+      message: (props) => `${props.value} is not a valid working days!`,
+    },
+  },
+  working_hours: {
+    type: Array,
+    required: true,
+    validate: {
+      validator: function (v) {
+        // use ["08:00", "17:00"] format
+        return /^\[(?:"[0-2][0-9]:[0-5][0-9]")(?:\,("[0-2][0-9]:[0-5][0-9]"))*\]$/.test(
+          JSON.stringify(v)
+        );
+      },
+      message: (props) => `${props.value} is not a valid working hours!`,
+    },
   },
   image_url: {
     type: String,
@@ -114,4 +139,4 @@ const RoomsSchema = new mongoose.Schema({
   },
 });
 
-module.exports = Rooms = mongoose.model("Rooms", RoomsSchema);
+module.exports = Offices = mongoose.model("Offices", OfficesSchema);

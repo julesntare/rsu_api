@@ -21,7 +21,6 @@ exports.verifyToken = async (req, res, next) => {
 
 // verify user role
 exports.verifyUserRole = async (req, res, next) => {
-  console.log(req.userData);
   try {
     // get user role from request
     const userRole = req.userData.userRole;

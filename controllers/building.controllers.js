@@ -1,11 +1,27 @@
 const mongoose = require("mongoose");
 const BuildingModel = require("../models/Buildings.model");
+const RoomsModel = require("../models/Rooms.model");
 
 exports.getAllBuildings = async (_req, res) => {
   BuildingModel.find({
     status: "active",
   })
-    .then((building) => res.json(building))
+    .then((building) => {
+      // embed no_of_rooms in each building
+      const promises = building.map(async (b) => {
+        const no_of_rooms = await RoomsModel.find({
+          room_building: b._id,
+          status: "active",
+        }).countDocuments();
+
+        return {
+          ...b._doc,
+          no_of_rooms: no_of_rooms,
+        };
+      });
+
+      Promise.all(promises).then((results) => res.json(results));
+    })
     .catch((err) =>
       res
         .status(404)
@@ -29,7 +45,7 @@ exports.createBuilding = async (req, res) => {
       message: "Building content can not be empty",
     });
   }
-  
+
   const newBuilding = new BuildingModel({
     building_name: req.body.building_name,
     building_description: req.body.building_description,
@@ -39,10 +55,10 @@ exports.createBuilding = async (req, res) => {
     added_on: Date.now(),
     status: req.body.status,
   });
-  
+
   newBuilding
     .save()
-    .then((building) => res.json(building))
+    .then((building) => res.status(201).json(building))
     .catch((err) =>
       res
         .status(400)
@@ -74,7 +90,7 @@ exports.modifyBuilding = async (req, res) => {
   BuildingModel.updateOne(
     { _id: mongoose.Types.ObjectId(req.params.id) },
     {
-      $set: {...req.body},
+      $set: { ...req.body },
     }
   )
     .then((_response) =>
