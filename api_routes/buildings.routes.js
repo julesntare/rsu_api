@@ -71,24 +71,21 @@ router.get("/:id", getBuildingById);
  *        type: number
  *        description: Number of building floors
  *      coordinates:
- *        type: array
+ *        type: Array
  *        description: Coordinates of the building
  *      near_locations:
- *        type: array
+ *        type: Array
  *        description: Nearby locations of the building
- *      added_on:
- *        type: date
- *        description: Date when the building was added
  *      status:
  *        type: string
  *        description: Status of the building
  *    example:
- *      building_name: "Muhabura"
- *      building_description: "Building containing classes and offices"
+ *      building_name: Muhabura
+ *      building_description: Building containing classes and offices
  *      floors: 5
  *      coordinates: [-1.33784783, 30.19293828]
- *      near_locations: ["Kalisimbi"]
- *      status: "active"
+ *      near_locations: [Kalisimbi]
+ *      status: active
  */
 
 /**

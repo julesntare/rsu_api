@@ -24,12 +24,22 @@ exports.getAllModules = async (req, res) => {
 };
 
 exports.createModule = async (req, res) => {
-    try {
-        const module = await ModulesModel.create(req.body);
-        res.status(201).json(module);
-    } catch (error) {
-        res.status(500).json(error);
+  try {
+    // check if department exists
+    const department = await DepartmentsModel.findById(
+      mongoose.Types.ObjectId(req.body.department)
+    );
+    if (!department) {
+      return res.status(404).json({
+        message: "Department not found",
+      });
     }
+
+    const module = await ModulesModel.create({...req.body, module_name: req.body.module_name.toLowerCase()});
+    res.status(201).json(module);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 exports.getModuleById = async (req, res) => {

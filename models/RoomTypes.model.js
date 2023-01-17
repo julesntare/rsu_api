@@ -3,14 +3,15 @@ const mongoose = require("mongoose");
 const RoomTypesSchema = new mongoose.Schema({
   room_type_name: {
     type: String,
+    enum: ["laboratory", "classroom", "auditorium", "hall", "other"],
     required: true,
     unique: true,
-    validate : {
-      validator : function(v) {
-        return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
+    validate: {
+      validator: function (v) {
+        return /^(laboratory|classroom|auditorium|hall|other)$/.test(v);
       },
-      message : (props) => `${props.value} is not a valid building name!`
-    }
+      message: (props) => `${props.value} is not a valid building name!`,
+    },
   },
   room_type_description: {
     type: String,
@@ -30,7 +31,7 @@ const RoomTypesSchema = new mongoose.Schema({
         return /^(active|disabled|terminated)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
-    }
+    },
   },
 });
 

@@ -63,35 +63,38 @@ router.get("/:id", getBookingById);
  *          - room
  *      properties:
  *          user_id:
- *              type: string
+ *              type: integer
+ *              format: int64
  *              description: User id
  *          all_authorized:
- *              type: array
+ *              type: Array
  *              description: All Authorized users in array or empty array if no other
  *          activity:
  *              type: object
+ *              format: json
  *              description: Activity object
  *          room:
- *              type: string
+ *              type: integer
+ *              format: int64
  *              description: Room id
  *          additional_info:
  *              type: string
  *              description: Additional info
  *      example:
  *          user_id: 6377aadcd6eef3f0c06c166d
- *          all_authorized: ["6377aadcd6eef3f0c06c166d", "6377aadcd6eef3f0c06c166d"]
+ *          all_authorized: [6377aadcd6eef3f0c06c166d, 6377aadcd6eef3f0c06c166d]
  *          activity: {
- *              activity_name: "Learning",
- *              activity_description: "Learning python in usual class",
- *              activity_recurrence: "weekly",
- *              activity_starting_date: "2023-01-02",
- *              activity_ending_date: "2023-01-04",
+ *              activity_name: Learning,
+ *              activity_description: Learning python in usual class,
+ *              activity_recurrence: weekly,
+ *              activity_starting_date: 2023-01-02,
+ *              activity_ending_date: 2023-01-04,
  *              activity_days: [1, 3],
- *              activity_time: [["10:00", "11:00"], ["12:00", "13:00"]],
- *              activity_meeting_link: "https://meet.google.com/lookup/abc123"
+ *              activity_time: [[10:00, 11:00], [12:00, 13:00]],
+ *              activity_meeting_link: https://meet.google.com/lookup/abc123
  *              }
  *          room: 63b299af8d89c14fb437f073
- *          additional_info: "we are requesting for panel seats"
+ *          additional_info: we are requesting for panel seats
  */
 
 /**

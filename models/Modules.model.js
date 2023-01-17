@@ -7,7 +7,8 @@ const ModulesSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
+        // accept only letters, numbers, symbols, spaces, and dashes
+        return /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{3,100}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid module name!`,
     },

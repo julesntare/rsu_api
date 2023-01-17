@@ -79,44 +79,47 @@ router.get("/:id", getOfficeById);
  *                  type: string
  *                  description: Description of the office
  *              office_building_location:
- *                  type: string
+ *                  type: integer
+ *                  format: int64
  *                  description: building reference (use the buildings endpoint to get the id)
  *              office_type:
- *                  type: enum
+ *                  type: string
+ *                  enum: ["private", "shared", "open", "hot_desk"]
  *                  description: office type (use enum values which are => "private", "shared", "open", "hot_desk")
  *              building_floor:
  *                  type: number
  *                  description: floor number (0=ground floor,1=first floor, etc.)
  *              coordinates:
- *                  type: array
+ *                  type: Array
  *                  description: office exact location on mapping
  *              capacity:
  *                  type: integer
  *                  description: Capacity of the office
  *              responsible:
- *                  type: string
+ *                  type: integer
+ *                  format: int64
  *                  description: Someone who is responsible for a certain office (use the users endpoint to get the id)
  *              working_days:
- *                  type: array
+ *                  type: Array
  *                  description: days of the week when the office is available (use enum values which are between 1-7)
  *              working_hours:
- *                  type: array
+ *                  type: Array
  *                  description: hours when the office is open (use enum values which are between 00:00-23:59)
  *              img_url:
  *                  type: string
  *                  description: url of the office image (optional)
  *          example:
- *              office_name: "Registrar Office"
- *              office_description: "The Registrar Office is responsible for the registration of students and the maintenance of their academic records."
- *              office_building_location: "63bbc858d58eb309ee2bc02a"
- *              office_type: "private"
+ *              office_name: Registrar Office
+ *              office_description: The Registrar Office is responsible for the registration of students and the maintenance of their academic records.
+ *              office_building_location: 63bbc858d58eb309ee2bc02a
+ *              office_type: private
  *              building_floor: 0
  *              coordinates: [-1.962621,30.064461]
  *              capacity: 2
- *              responsible: "63befca5ba573592f077b7d2"
+ *              responsible: 63befca5ba573592f077b7d2
  *              working_days: [1,2,3,4,5]
- *              working_hours: ["08:00","17:00"]
- *              img_url: "https://res.cloudinary.com/julesntare/image/upload/v1673265264/rsu_cst_buildings/undraw_apartment_rent_o0ut_sj75zz.png"
+ *              working_hours: [08:00,17:00]
+ *              img_url: https://res.cloudinary.com/julesntare/image/upload/v1673265264/rsu_cst_buildings/undraw_apartment_rent_o0ut_sj75zz.png
  */
 
 /**

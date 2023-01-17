@@ -22,18 +22,6 @@ exports.getBookingById = async (req, res) => {
 };
 
 exports.createBooking = async (req, res) => {
-  // check if user exists in users collection
-  const userExists = await UserSchema.findById(req.body.user_id);
-  if (!userExists) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
-
-  // check if user exists in rooms collection
-  const roomExists = await RoomSchema.findById(req.body.room);
-  if (!roomExists) {
-    return res.status(400).json({ message: "Room does not exist" });
-  }
-
   // check if req.body.activity.activity_recurrence is set on one value instead of once | weekly | monthly | certain_days
   if (
     req.body.activity.activity_recurrence !== "once" &&

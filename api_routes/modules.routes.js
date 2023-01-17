@@ -10,6 +10,7 @@ const router = express.Router();
  *      summary: Get all modules
  *      tags:
  *         - Modules endpoints
+ *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -28,6 +29,7 @@ router.get("/", getAllModules);
  *      summary: Get module by id
  *      tags:
  *          - Modules endpoints
+ *      security: []
  *      parameters:
  *          -   name: id
  *              in: path
@@ -51,33 +53,33 @@ router.get("/:id", getModuleById);
  * definitions:
  *  ModuleSchema:
  *      type: object
+ *      required:
+ *          -   module_name
+ *          -   module_code
+ *          -   department
  *      properties:
  *          module_name:
- *              type: string
- *              required: true
- *              description: Module name
+ *                  type: string
+ *                  description: Module name
  *          module_code:
- *              type: string
- *              required: true
- *              description: Module code
+ *                  type: string
+ *                  description: Module code
  *          module_description:
- *              type: string
- *              required: false
- *              description: Module Descriptions
+ *                  type: string
+ *                  description: Module Descriptions
  *          department:
- *              type: string
- *              required: false
- *              description: Department id
+ *                  type: integer
+ *                  format: int64
+ *                  description: Department id
  *          status:
- *              type: string
- *              required: false
- *              description: Department Status
+ *                  type: string
+ *                  description: Department Status
  *      example:
- *          module_name: "Calculus II"
- *          module_description: "Mathematics-bse module description"
- *          module_code: "MAT1261"
- *          department: "6377aadcd6eef3f0c06c166d"
- *          status: "active"
+ *          module_name: Calculus II
+ *          module_description: Mathematics-bse module description
+ *          module_code: MAT1261
+ *          department: 6377aadcd6eef3f0c06c166d
+ *          status: active
  */
 
 /**
@@ -96,7 +98,7 @@ router.get("/:id", getModuleById);
  *          content:
  *             application/json:
  *                  schema:
- *                     $ref: '#/components/schemas/ModuleSchema'
+ *                     $ref: '#/definitions/ModuleSchema'
  *      responses:
  *          201:
  *              description: Created
@@ -214,7 +216,7 @@ router.put("/change/status/:id", verifyToken, verifySchedulers, changeModuleStat
  *  delete:
  *     summary: Delete a Module By Id
  *     tags:
- *         -   Modules
+ *         -   Modules endpoints
  *     parameters:
  *         -    name: id
  *              in: path

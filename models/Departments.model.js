@@ -7,7 +7,7 @@ const DepartmentsSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
+        return /^[a-zA-Z0-9 ]{2,100}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid department name!`,
     }
@@ -15,12 +15,7 @@ const DepartmentsSchema = new mongoose.Schema({
   department_description: {
     type: String,
     required: false,
-    validate: {
-      validator: function (v) {
-        return /^[a-zA-Z0-9 ]{2,256}$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid department description!`,
-    }
+    default: "No description provided",
   },
   department_head: {
     type: String,
@@ -42,10 +37,7 @@ const DepartmentsSchema = new mongoose.Schema({
     validate: {
       validator: function (v) {
         // validate array of lat and long coordinates
-        let latitude = "(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)";
-        let longitude = "(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?))(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*";
-
-        return new RegExp(`^\[${latitude},(\s?)${longitude}]$`).test(v);
+        return /^\[(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)),(\s?)(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)(?:\|(?:(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?),(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)))*\]$/.test(JSON.stringify(v));
       },
       message: (props) => `${props.value} is not a valid office location!`,
     }

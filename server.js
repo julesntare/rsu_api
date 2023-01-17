@@ -16,7 +16,7 @@ const roomsRoutes = require("./api_routes/rooms.routes");
 const officesRoutes = require("./api_routes/offices.routes");
 const groupsRoutes = require("./api_routes/groups.routes");
 const bookingsRoutes = require("./api_routes/bookings.routes");
-const csvRoute = require("./api_routes/csv_upload.routes");
+const csvRoute = require("./api_routes/timetable_manipulation.routes");
 const morgan = require("morgan");
 const {log} = require("mercedlogger");
 

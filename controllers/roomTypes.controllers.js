@@ -31,7 +31,7 @@ exports.createRoomType = async (req, res) => {
   }
 
   const newRoomType = new RoomTypeModel({
-    room_type_name: req.body.room_type_name,
+    room_type_name: req.body.room_type_name.toLowerCase(),
     room_type_description: req.body.room_type_description,
     added_on: Date.now(),
     status: req.body.status,

@@ -1,13 +1,15 @@
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
-const { verifyToken, verifySchedulers } = require("../middlewares/authJWT.middleware");
 const {
-  removeEmptyColumns,
+  verifyToken,
+  verifySchedulers,
+} = require("../middlewares/authJWT.middleware");
+const {
   uploadCSV,
   getCSVData,
-  pushJSONDataToDB,
-} = require("../controllers/csv_upload.controllers");
+  saveTimetable,
+} = require("../controllers/timetable_manipulation.controllers");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,7 +28,7 @@ const upload = multer({ storage });
  *  post:
  *      summary: Upload a CSV file.
  *      tags:
- *          - CSV endpoints
+ *          - Timetable endpoints
  *      requestBody:
  *          content:
  *              multipart/form-data:
@@ -36,6 +38,7 @@ const upload = multer({ storage });
  *                          file:
  *                              type: string
  *                              format: binary
+ *                              required: true
  *      responses:
  *          200:
  *              description: Success
@@ -44,16 +47,31 @@ const upload = multer({ storage });
  *          500:
  *              description: Internal server error
  */
-router.post("/upload", upload.single("file"), verifyToken, verifySchedulers, uploadCSV);
+router.post(
+  "/upload",
+  upload.single("file"),
+  verifyToken,
+  verifySchedulers,
+  uploadCSV
+);
 
 /**
  * @swagger
- * /api/csv/removeEmptyColumns:
- *  put:
- *      summary: Remove empty columns from CSV file.
+ * /api/csv/save_timetable:
+ *  post:
+ *      summary: Save timetable to database.
  *      tags:
- *          - CSV endpoints
- *      parameters: []
+ *         - Timetable endpoints
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          starting_date:
+ *                              type: string
+ *                              format: date 
+ *                              required: true
  *      responses:
  *          200:
  *              description: Success
@@ -62,7 +80,7 @@ router.post("/upload", upload.single("file"), verifyToken, verifySchedulers, upl
  *          500:
  *              description: Internal server error
  */
-router.put("/removeEmptyColumns", verifyToken, verifySchedulers, removeEmptyColumns);
+router.post("/save_timetable", verifyToken, verifySchedulers, saveTimetable);
 
 /**
  * @swagger
@@ -70,7 +88,7 @@ router.put("/removeEmptyColumns", verifyToken, verifySchedulers, removeEmptyColu
  *  get:
  *      summary: Get data from CSV file.
  *      tags:
- *          - CSV endpoints
+ *          - Timetable endpoints
  *      parameters: []
  *      responses:
  *          200:
@@ -81,29 +99,5 @@ router.put("/removeEmptyColumns", verifyToken, verifySchedulers, removeEmptyColu
  *              description: Internal server error
  */
 router.get("/getData", verifyToken, verifySchedulers, getCSVData);
-
-/**
- * @swagger
- * /api/csv/pushToDB:
- *  post:
- *      summary: Push data from uploaded CSV file to DB.
- *      tags:
- *        - CSV endpoints
- *      parameters: []
- *      responses:
- *        200:
- *          description: Success
- *        400:
- *          description: Bad request
- *        500:
- *          description: Internal server error
- *        401:
- *          description: Unauthorized
- *        403:
- *          description: Forbidden
- *        404:
- *          description: Not found
- */
-router.post("/pushToDB", verifyToken, verifySchedulers, pushJSONDataToDB);
 
 module.exports = router;

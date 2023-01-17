@@ -10,7 +10,8 @@ const BookingsSchema = new mongoose.Schema({
     },
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+        // accept null values also
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) =>
         `${props.value} is not a valid user reference format!`,
@@ -59,7 +60,8 @@ const BookingsSchema = new mongoose.Schema({
     },
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+        // accept also null value
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) =>
         `${props.value} is not a valid room reference format!`,

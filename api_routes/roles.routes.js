@@ -68,8 +68,8 @@ router.get("/:id", getRoleById);
  *                  type: string
  *                  description: The description of the role
  *          example:
- *              role_name: "Admin"
- *              role_description: "Admin role"
+ *              role_name: Admin
+ *              role_description: Admin role
  */
 
 /**

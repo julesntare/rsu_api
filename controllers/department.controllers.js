@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const DepartmentsModel = require("../models/Departments.model");
 const DepartmentModel = require("../models/Departments.model");
+const UsersModel = require("../models/Users.model");
 
 exports.getAllDepartments = async (_req, res) => {
   DepartmentModel.find({
@@ -65,8 +67,28 @@ exports.createDepartment = async (req, res) => {
     });
   }
 
-  const department = new DepartmentModel({
+  // check if department already exists
+  const departmentExists = await DepartmentsModel.findOne({
     department_name: req.body.department_name,
+  });
+  if (departmentExists) {
+    return res.status(400).json({
+      message: "Department already exists",
+    });
+  }
+
+  // check if department head exists in users
+  const departmentHeadExists = await UsersModel.findOne({
+    _id: req.body.department_head.toLowerCase(),
+  });
+  if (!departmentHeadExists) {
+    return res.status(400).json({
+      message: "Department head does not exist",
+    });
+  }
+
+  const department = new DepartmentModel({
+    department_name: req.body.department_name.toLowerCase(),
     department_description: req.body.department_description,
     department_head: req.body.department_head,
     office_location: req.body.office_location,
@@ -110,8 +132,8 @@ exports.changeDepartmentHead = async (req, res) => {
 };
 
 exports.changeDepartmentOfficeCoordinates = async (req, res) => {
-    let coordinates = [];
-    coordinates.push({latitude: req.body.lat, longitude: req.body.long});
+  let coordinates = [];
+  coordinates.push({ latitude: req.body.lat, longitude: req.body.long });
   DepartmentModel.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {
     office_location: req.body.coordinates,
   })

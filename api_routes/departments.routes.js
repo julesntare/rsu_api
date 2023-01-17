@@ -1,6 +1,19 @@
 const express = require("express");
-const { getAllDepartments, getDepartmentById, createDepartment, changeDepartmentStatus, changeDepartmentHead, changeDepartmentNearLocations, changeDepartmentOfficeCoordinates, removeDepartment } = require("../controllers/department.controllers");
-const { verifyToken, verifyAdmin, verifyUser } = require("../middlewares/authJWT.middleware");
+const {
+  getAllDepartments,
+  getDepartmentById,
+  createDepartment,
+  changeDepartmentStatus,
+  changeDepartmentHead,
+  changeDepartmentNearLocations,
+  changeDepartmentOfficeCoordinates,
+  removeDepartment,
+} = require("../controllers/department.controllers");
+const {
+  verifyToken,
+  verifyAdmin,
+  verifyUser,
+} = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -10,6 +23,7 @@ const router = express.Router();
  *      summary: Request all departments.
  *      tags:
  *         - Department endpoints
+ *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -28,6 +42,7 @@ router.get("/all", getAllDepartments);
  *      summary: Request a department by id.
  *      tags:
  *        - Department endpoints
+ *      security: []
  *      parameters:
  *        -     name: id
  *              in: path
@@ -43,6 +58,44 @@ router.get("/all", getAllDepartments);
  *              description: Internal Server Error
  */
 router.get("/:id", getDepartmentById);
+
+/**
+ * @swagger
+ * definitions:
+ *     Department:
+ *          type: object
+ *          required:
+ *              -   department_name
+ *              -   department_description
+ *              -   department_head
+ *          properties:
+ *              department_name:
+ *                  type: string
+ *                  description: Department name
+ *              department_description:
+ *                  type: string
+ *                  description: Department description
+ *              department_head:
+ *                  type: integer
+ *                  format: int64
+ *                  description: Department head (reference id from users collection)
+ *              near_locations:
+ *                  type: Array
+ *                  description: Department near locations
+ *              office_location:
+ *                  type: Array
+ *                  description: Department office coordinates
+ *              status:
+ *                  type: string
+ *                  description: Department status
+ *          example:
+ *              department_name: Computer Science
+ *              department_description: Department of Computer Science
+ *              department_head: 1f9f1b9b9c9d9b1b8c8c8c8c
+ *              near_locations: [muhazi conference hall, girls hostels near dusaid]
+ *              office_location: [-1.92424, 30.92424]
+ *              status: active
+ */
 
 /**
  * @swagger
@@ -98,7 +151,12 @@ router.post("/create", verifyToken, verifyAdmin, createDepartment);
  *          500:
  *              description: Internal Server Error
  */
-router.put("/:id/change/status", verifyToken, verifyAdmin, changeDepartmentStatus);
+router.put(
+  "/:id/change/status",
+  verifyToken,
+  verifyAdmin,
+  changeDepartmentStatus
+);
 
 /**
  * @swagger
@@ -162,7 +220,12 @@ router.put("/:id/change/head", verifyToken, verifyAdmin, changeDepartmentHead);
  *          500:
  *            description: Internal Server Error
  */
-router.put("/:id/change/office_coordinates", verifyToken, verifyUser, changeDepartmentOfficeCoordinates);
+router.put(
+  "/:id/change/office_coordinates",
+  verifyToken,
+  verifyUser,
+  changeDepartmentOfficeCoordinates
+);
 
 /**
  * @swagger
@@ -195,7 +258,12 @@ router.put("/:id/change/office_coordinates", verifyToken, verifyUser, changeDepa
  *          500:
  *            description: Internal Server Error
  */
-router.put("/:id/change/near_locations", verifyToken, verifyUser, changeDepartmentNearLocations);
+router.put(
+  "/:id/change/near_locations",
+  verifyToken,
+  verifyUser,
+  changeDepartmentNearLocations
+);
 
 /**
  * @swagger

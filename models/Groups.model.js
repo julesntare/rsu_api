@@ -6,11 +6,11 @@ const GroupsSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validation: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid group name!`,
-    }
+    },
   },
   group_description: {
     type: String,
@@ -20,11 +20,11 @@ const GroupsSchema = new mongoose.Schema({
     type: Number,
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[1-5]{1}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid group year!`,
-    }
+    },
   },
   department: {
     type: String,
@@ -34,11 +34,12 @@ const GroupsSchema = new mongoose.Schema({
     },
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[0-9a-fA-F]{24}$/.test(v);
       },
-      message: (props) => `${props.value} is not a valid department reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid department reference format!`,
+    },
   },
   class_presenter: {
     type: String,
@@ -48,21 +49,24 @@ const GroupsSchema = new mongoose.Schema({
     },
     required: false,
     validate: {
-      validator: function(v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+      validator: function (v) {
+        // accept reference or null
+        return /^[0-9a-fA-F]{24}$/.test(v) || v === null;
       },
-      message: (props) => `${props.value} is not a valid class presenter reference format!`,
-    }
+      message: (props) =>
+        `${props.value} is not a valid class presenter reference format!`,
+    },
   },
   class_size: {
     type: Number,
     required: false,
     validate: {
-      validator: function(v) {
-        return /^[0-9]{2,3}$/.test(v);
+      validator: function (v) {
+        // accept also a null value
+        return /^[0-9]{1,5}$/.test(v) || v === null;
       },
       message: (props) => `${props.value} is not a valid class size!`,
-    }
+    },
   },
   added_on: {
     type: Date,
@@ -78,7 +82,7 @@ const GroupsSchema = new mongoose.Schema({
         return /^(active|disabled|terminated)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid status!`,
-    }
+    },
   },
 });
 

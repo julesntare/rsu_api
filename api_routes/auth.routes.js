@@ -6,7 +6,7 @@ const router = express.Router();
 /**
  * @swagger
  * definitions:
- *  RegisterData:
+ *  Users:
  *      type: object
  *      required:
  *          - fullname
@@ -16,30 +16,31 @@ const router = express.Router();
  *          - user_role
  *      properties:
  *          fullname:
- *              type: string
- *              description: Provide Your First, middle (if any), and Last Name
+ *                  type: string
+ *                  description: Provide Your First, middle (if any), and Last Name
  *          title:
- *              type: string
- *              description: Provide Your Campus Title
+ *                  type: string
+ *                  description: Provide Your Campus Title
  *          email:
- *              type: string
- *              description: Provide Your Email
+ *                  type: string
+ *                  description: Provide Your Email
  *          mobile_no:
- *              type: string
- *              description: Provide Your Mobile Number. Format (+250788888888 / 250788888888 / 0788888888)
+ *                  type: string
+ *                  description: Provide Your Mobile Number. Format (+250788888888 / 250788888888 / 0788888888)
  *          password:
- *              type: string
- *              description: Provide Password of your choice. password must include (>= 8 characters, at least one upperCase, one lowerCase, one symbol and one number)
+ *                  type: string
+ *                  description: Provide Password of your choice. password must include (>= 8 characters, at least one upperCase, one lowerCase, one symbol and one number)
  *          user_role:
- *              type: string
- *              description: Provide Role ID. (use roles endpoint to get available roles)
+ *                  type: integer
+ *                  format: int64
+ *                  description: Provide Role ID. (use roles endpoint to get available roles)
  *      example:
- *          fullname: "John Doe"
- *          title: "System Admin"
- *          email: "johndoe@gmail.com"
+ *          fullname: John Doe
+ *          title: System Admin
+ *          email: johndoe@gmail.com
  *          mobile_no: "0788888888"
- *          password: "jodT^O3)@22"
- *          user_role: "6377ecba5eeae9ff7c42423e"
+ *          password: jodT^O3)@22
+ *          user_role: 6377ecba5eeae9ff7c42423e
  */
 
 /**
@@ -102,7 +103,7 @@ router.post("/login", login);
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/definitions/RegisterData'
+ *                      $ref: '#/definitions/Users'
  *      responses:
  *          201:
  *              description: User created

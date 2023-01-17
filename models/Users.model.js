@@ -64,7 +64,7 @@ const UsersSchema = new mongoose.Schema({
     default: null,
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}|(null)$/.test(v);
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid role!`,
     },

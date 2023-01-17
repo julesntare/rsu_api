@@ -60,13 +60,14 @@ router.get("/:id", getRoomTypeById);
  *      properties:
  *          room_type_name:
  *              type: string
+ *              enum: [laboratory, classroom, auditorium, hall, other]
  *              description: The name of the roomType
  *          room_type_description:
  *              type: string
  *              description: The description of the roomType
  *      example:
- *          room_type_name: "Single"
- *          room_type_description: "Single room"
+ *          room_type_name: classroom
+ *          room_type_description: room intended to be used for teaching
  */
 
 /**

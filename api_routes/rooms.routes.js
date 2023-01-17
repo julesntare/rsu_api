@@ -79,13 +79,15 @@ router.get("/:id", getRoomById);
  *                  type: string
  *                  description: Description of the room
  *              room_building:
- *                  type: string
+ *                  type: integer
+ *                  format: int64
  *                  description: building reference (use the buildings endpoint to get the id)
  *              room_floor:
  *                  type: number
  *                  description: floor number (0=ground floor,1=first floor, etc.)
  *              room_type:
- *                  type: string
+ *                  type: integer
+ *                  format: int64
  *                  description: Type of the room (use the room types endpoint to get the id)
  *              capacity:
  *                  type: integer
@@ -94,21 +96,22 @@ router.get("/:id", getRoomById);
  *                  type: boolean
  *                  description: If the room has fixed seats (true | false)
  *              resources:
- *                  type: array
+ *                  type: Array
  *                  description: List of resources that the room has
  *              responsible:
- *                  type: string
+ *                  type: integer
+ *                  format: int64
  *                  description: Someone who is responsible for a certain room (use the users endpoint to get the id)
  *          example:
- *                  room_name: "P001"
- *                  room_description: "Room can be used or classes, conference and other events"
- *                  room_building: "63682d0710000a7041ae5aac"
+ *                  room_name: P001
+ *                  room_description: Room can be used or classes, conference and other events
+ *                  room_building: 63682d0710000a7041ae5aac
  *                  room_floor: 0
- *                  room_type: "6368bc27a3c65b114194fd94"
+ *                  room_type: 6368bc27a3c65b114194fd94
  *                  capacity: 120
  *                  has_fixed_seats: true
- *                  resources: ["projector", "speakers"]
- *                  responsible: "6368bc27a3c65b114194fd94"
+ *                  resources: [projector, speakers]
+ *                  responsible: 6368bc27a3c65b114194fd94
  */
 
 /**

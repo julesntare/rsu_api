@@ -18,6 +18,7 @@ const router = express.Router();
  *      summary: Request all groups.
  *      tags:
  *          - Group endpoints
+ *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -36,6 +37,7 @@ router.get("/all", getAllGroups);
  *      summary: Request a group by id.
  *      tags:
  *          -   Group endpoints
+ *      security: []
  *      parameters:
  *          -   name: id
  *              in: path
@@ -72,20 +74,22 @@ router.get("/:id", getGroupById);
  *                  type: integer
  *                  description: Group year
  *              department:
- *                  type: string
- *                  description: Department id
+ *                  type: integer
+ *                  format: int64
+ *                  description: Department id (reference id from department collection)
  *              class_presenter:
- *                  type: string
- *                  description: Class presenter id
+ *                  type: integer
+ *                  format: int64
+ *                  description: Class presenter id (reference id from users collection)
  *              class_size:
  *                  type: integer
  *                  description: Class size
  *          example:
- *              group_name: "Year 4 Computer Science"
- *              group_description: "Year 4 group"
+ *              group_name: Year 4 Computer Science
+ *              group_description: Year 4 group
  *              group_year: 4
- *              department: "5f9f1b9b0b5c3c0b8c8b8b5d"
- *              class_presenter: "5f9f1b9b0b5c3c0b8c8b8b5d"
+ *              department: 5f9f1b9b0b5c3c0b8c8b8b5d
+ *              class_presenter: 5f9f1b9b0b5c3c0b8c8b8b5d
  *              class_size: 30
  */
 
