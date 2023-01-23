@@ -6,6 +6,7 @@ exports.getAllBuildings = async (_req, res) => {
   BuildingModel.find({
     status: "active",
   })
+    .sort({ added_on: -1 })
     .then((building) => {
       // embed no_of_rooms in each building
       const promises = building.map(async (b) => {
@@ -43,6 +44,7 @@ exports.createBuilding = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({
       message: "Building content can not be empty",
+      statusCode: 400,
     });
   }
 
@@ -58,11 +60,15 @@ exports.createBuilding = async (req, res) => {
 
   newBuilding
     .save()
-    .then((building) => res.status(201).json(building))
+    .then((_building) =>
+      res
+        .status(201)
+        .json({ message: "Building added successfully", statusCode: 201 })
+    )
     .catch((err) =>
       res
         .status(400)
-        .json({ message: "Invalid building object", error: err.message })
+        .json({ message: "Invalid building object",statusCode: 400, error: err.message })
     );
 };
 

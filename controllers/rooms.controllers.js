@@ -8,31 +8,38 @@ exports.getAllRooms = async (_req, res) => {
   RoomModel.find({
     status: "active",
   })
+    .sort({ added_on: -1 })
     .then((room) => {
       // get all info on each room_building, responsible, and room_type
       const promises = room.map(async (r) => {
-        const building = await Buildings.findById(
+        const building = await BuildingsModel.findById(
           mongoose.Types.ObjectId(r.room_building)
         ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid building id", error: err.message });
+          res.status(400).json({
+            message: "Invalid building id",
+            statusCode: 400,
+            error: err.message,
+          });
         });
 
-        const roomType = await RoomTypes.findById(
+        const roomType = await RoomTypesModel.findById(
           mongoose.Types.ObjectId(r.room_type)
         ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid room type id", error: err.message });
+          res.status(400).json({
+            message: "Invalid room type id",
+            statusCode: 400,
+            error: err.message,
+          });
         });
 
-        const responsible = await Users.findById(
+        const responsible = await UsersModel.findById(
           mongoose.Types.ObjectId(r.responsible)
         ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid responsible id", error: err.message });
+          res.status(400).json({
+            message: "Invalid responsible id",
+            statusCode: 400,
+            error: err.message,
+          });
         });
 
         return {
@@ -46,7 +53,11 @@ exports.getAllRooms = async (_req, res) => {
       Promise.all(promises).then((results) => res.json(results));
     })
     .catch((err) =>
-      res.status(404).json({ message: "No Room not found", error: err.message })
+      res.status(404).json({
+        message: "No Room not found",
+        statusCode: 404,
+        error: err.message,
+      })
     );
 };
 
@@ -62,6 +73,7 @@ exports.createRoom = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({
       message: "Room content can not be empty",
+      statusCode: 400,
     });
   }
 
@@ -69,30 +81,46 @@ exports.createRoom = async (req, res) => {
   const building = await BuildingsModel.findById({
     _id: mongoose.Types.ObjectId(req.body.room_building),
   }).catch((err) => {
-    res
-      .status(400)
-      .json({ message: "Invalid building id", error: err.message });
+    res.status(400).json({
+      message: "Invalid building id",
+      statusCode: 400,
+      error: err.message,
+    });
   });
 
   const roomType = await RoomTypesModel.findById({
     _id: mongoose.Types.ObjectId(req.body.room_type),
   }).catch((err) => {
-    res
-      .status(400)
-      .json({ message: "Invalid room type id", error: err.message });
+    res.status(400).json({
+      message: "Invalid room type id",
+      statusCode: 400,
+      error: err.message,
+    });
   });
 
   const responsible = await UsersModel.findById({
     _id: mongoose.Types.ObjectId(req.body.responsible),
   }).catch((err) => {
-    res
-      .status(400)
-      .json({ message: "Invalid responsible id", error: err.message });
+    res.status(400).json({
+      message: "Invalid responsible id",
+      statusCode: 400,
+      error: err.message,
+    });
   });
 
   if (!building || !roomType || !responsible) {
     return res.status(400).json({
       message: "Invalid building, room type or responsible user",
+      statusCode: 400,
+    });
+  }
+
+  console.log(building.floors, req.body.room_floor);
+  // check if floor is equal to building floor
+  if (building.floors - 1 < req.body.room_floor) {
+    return res.status(400).json({
+      message: "Room Floor has to be equal or less to building's total floor",
+      statusCode: 400,
     });
   }
 
@@ -111,11 +139,17 @@ exports.createRoom = async (req, res) => {
 
   newRoom
     .save()
-    .then((room) => res.status(201).json(room))
-    .catch((err) =>
+    .then((_room) =>
       res
-        .status(400)
-        .json({ message: "Invalid room object", error: err.message })
+        .status(201)
+        .json({ message: "Added Room Successfully", statusCode: 201 })
+    )
+    .catch((err) =>
+      res.status(400).json({
+        message: "Invalid room object",
+        statusCode: 400,
+        error: err.message,
+      })
     );
 };
 
@@ -124,11 +158,15 @@ exports.removeRoom = async (req, res) => {
     status: "inactive",
   })
     .then((_response) =>
-      res.status(204).json({ result: "success", message: "Room removed" })
+      res
+        .status(204)
+        .json({ result: "success", statusCode: 204, message: "Room removed" })
     )
     .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid room object", error: err.message })
+      res.status(400).json({
+        message: "Invalid room object",
+        statusCode: 400,
+        error: err.message,
+      })
     );
 };

@@ -7,7 +7,6 @@ const {
 } = require("../middlewares/authJWT.middleware");
 const {
   uploadCSV,
-  getCSVData,
   saveTimetable,
 } = require("../controllers/timetable_manipulation.controllers");
 
@@ -81,23 +80,5 @@ router.post(
  *              description: Internal server error
  */
 router.post("/save_timetable", verifyToken, verifySchedulers, saveTimetable);
-
-/**
- * @swagger
- * /api/csv/getData:
- *  get:
- *      summary: Get data from CSV file.
- *      tags:
- *          - Timetable endpoints
- *      parameters: []
- *      responses:
- *          200:
- *              description: Success
- *          400:
- *              description: Bad request
- *          500:
- *              description: Internal server error
- */
-router.get("/getData", verifyToken, verifySchedulers, getCSVData);
 
 module.exports = router;
