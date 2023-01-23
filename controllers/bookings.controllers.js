@@ -4,7 +4,13 @@ const UserSchema = require("../models/Users.model");
 const RoomSchema = require("../models/Rooms.model");
 
 exports.getAllBookings = async (_req, res) => {
-  BookingsSchema.find()
+  BookingsSchema.find({
+    // get bookings where activity.activity_starting_date is greater or equal to today and status is confirmed
+    "activity.activity_starting_date": {
+      $gte: new Date().toISOString().slice(0, 10),
+    },
+    status: "confirmed",
+  })
     .then((booking) => res.json(booking))
     .catch((err) =>
       res.status(404).json({ message: "Booking not found", error: err.message })

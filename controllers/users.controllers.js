@@ -1,11 +1,32 @@
 const mongoose = require("mongoose");
+const RolesModel = require("../models/Roles.model");
 const UsersModel = require("../models/Users.model");
 
 exports.getAllUsers = async (_req, res) => {
+  // find active and order by added_on
   UsersModel.find({
     status: "active",
   })
-    .then((user) => res.status(200).json(user))
+    .sort({ added_on: -1 })
+    .then((user) => {
+      const promises = user.map(async (u) => {
+        // get role object for each user from roles model
+        const roleObj = await RolesModel.findById(
+          mongoose.Types.ObjectId(u.user_role)
+        ).catch((err) => {
+          res
+            .status(400)
+            .json({ message: "Invalid user role", error: err.message });
+        });
+
+        return {
+          ...u._doc,
+          user_role: roleObj,
+        };
+      });
+
+      Promise.all(promises).then((results) => res.status(200).json(results));
+    })
     .catch((err) =>
       res.status(404).json({ message: "No User not found", error: err.message })
     );
@@ -158,97 +179,95 @@ exports.changePassword = async (req, res) => {
   });
 };
 
-exports.changeRole = async(req, res) => {
+exports.changeRole = async (req, res) => {
   // check if the user exists
   UsersModel.findById(mongoose.Types.ObjectId(req.params.id)).then((user) => {
     if (!user) {
       UsersModel.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {
-      user_role: req.body.role_id,
-    })
-    .then((_response) =>
-      res
-        .status(200)
-        .json({ result: "success", message: "User role updated" })
-    )
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid user object", error: err.message })
-    );
+        user_role: req.body.role_id,
+      })
+        .then((_response) =>
+          res
+            .status(200)
+            .json({ result: "success", message: "User role updated" })
+        )
+        .catch((err) =>
+          res
+            .status(400)
+            .json({ message: "Invalid user object", error: err.message })
+        );
     } else {
       res.status(404).json({ message: "User not found" });
     }
   });
-}
+};
 
-exports.changeUsername = async(req, res) => {
+exports.changeUsername = async (req, res) => {
   // check if the user exists
   UsersModel.findById(mongoose.Types.ObjectId(req.params.id)).then((user) => {
     if (!user) {
       UsersModel.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {
-      username: req.body.username,
-    })
-    .then((_response) =>
-      res
-        .status(200)
-        .json({ result: "success", message: "Username updated" })
-    )
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid user object", error: err.message })
-    );
+        username: req.body.username,
+      })
+        .then((_response) =>
+          res
+            .status(200)
+            .json({ result: "success", message: "Username updated" })
+        )
+        .catch((err) =>
+          res
+            .status(400)
+            .json({ message: "Invalid user object", error: err.message })
+        );
     } else {
       res.status(404).json({ message: "User not found" });
     }
   });
-}
+};
 
-exports.changeEmail = async(req, res) => {
+exports.changeEmail = async (req, res) => {
   // check if the user exists
   UsersModel.findById(mongoose.Types.ObjectId(req.params.id)).then((user) => {
     if (!user) {
       UsersModel.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {
-      email: req.body.email,
-    })
-    .then((_response) =>
-      res
-        .status(200)
-        .json({ result: "success", message: "Email updated" })
-    )
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid user object", error: err.message })
-    );
+        email: req.body.email,
+      })
+        .then((_response) =>
+          res.status(200).json({ result: "success", message: "Email updated" })
+        )
+        .catch((err) =>
+          res
+            .status(400)
+            .json({ message: "Invalid user object", error: err.message })
+        );
     } else {
       res.status(404).json({ message: "User not found" });
     }
   });
-}
+};
 
-exports.changePhone = async(req, res) => {
+exports.changePhone = async (req, res) => {
   // check if the user exists
   UsersModel.findById(mongoose.Types.ObjectId(req.params.id)).then((user) => {
     if (!user) {
       UsersModel.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {
-      mobile_no: req.body.mobile_no,
-    })
-    .then((_response) =>
-      res
-        .status(200)
-        .json({ result: "success", message: "User Mobile Number changed" })
-    )
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid user object", error: err.message })
-    );
+        mobile_no: req.body.mobile_no,
+      })
+        .then((_response) =>
+          res
+            .status(200)
+            .json({ result: "success", message: "User Mobile Number changed" })
+        )
+        .catch((err) =>
+          res
+            .status(400)
+            .json({ message: "Invalid user object", error: err.message })
+        );
     } else {
       res.status(404).json({ message: "User not found" });
     }
   });
-}
+};
 
 exports.searchUserByAny = async (req, res) => {
   UsersModel.find({
@@ -271,4 +290,4 @@ exports.searchUserByAny = async (req, res) => {
         .status(400)
         .json({ message: "Invalid user object", error: err.message })
     );
-}
+};

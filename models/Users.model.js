@@ -17,7 +17,7 @@ const UsersSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
+        return /^[\w\-\.]+@([\w-]+\.)+[\w-]{2,3}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid email!`,
     },
@@ -37,10 +37,10 @@ const UsersSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (v) {
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/.test(v);
+        return /^(?=.*\d)(?=.*[!@#$%^&*.])(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(v);
       },
       message: (props) =>
-        `${props.value} password must include: >= 8 chars, at least one upperCase, one lowerCase, one symbol and one number`,
+        `${props.value} password must include: >= 6 chars, at least one upperCase, one lowerCase, one symbol and one number`,
     },
   },
   mobile_no: {
@@ -49,7 +49,7 @@ const UsersSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^\+?(0)*(?:250-)?(?:250)?(7)(8|9|2|3)[0-9]{7}(?!\S)$/g.test(v);
+        return /^(07|2507|\+2507)(9|8|3|2)[0-9]{7}$/g.test(v);
       },
       message: (props) => `${props.value} is not a valid mobile number!`,
     },

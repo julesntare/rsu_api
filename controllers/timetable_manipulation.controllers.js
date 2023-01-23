@@ -8,6 +8,46 @@ const GroupsModel = require("../models/Groups.model");
 const BookingsModel = require("../models/Bookings.model");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
+exports.uploadRawFile = async (req, res) => {
+  // upload txt file and
+  // check if not empty or not .txt or .csv
+  // 1. split rows for each line starting with ',_'
+  // 2. remove ',' starting those lines
+  // 3. convert into csv files with each row in a file with string name following ',_' before next ','
+
+  // upload txt file and save it to uploads folder
+  const timeTableFile = req.file;
+  if (!timeTableFile) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+  //  check if file is txt
+  if (timeTableFile.mimetype !== "text/plain") {
+    return res.status(400).json({ message: "File is not a txt" });
+  }
+  // check if file is empty
+  if (timeTableFile.size === 0) {
+    return res.status(400).json({ message: "File is empty" });
+  }
+  // check if file is bigger than 1MB
+  if (timeTableFile.size > 1000000) {
+    return res.status(400).json({ message: "File is too big" });
+  }
+
+  // read the file and split it into rows
+  const fileExists = fs.existsSync(
+    path.join(__dirname, `../uploads/timetable.txt`)
+  );
+  if (!fileExists) {
+    return res.status(400).json({ message: "File does not exist" });
+  }
+  const data = fs.readFileSync(
+    path.join(__dirname, `../uploads/timetable.txt`),
+    "utf8"
+  );
+  // split lines containing prefix ',_'
+  
+};
+
 exports.uploadCSV = async (req, res) => {
   // upload csv file and save it to uploads folder
   const timeTableFile = req.file;
@@ -160,29 +200,6 @@ exports.uploadCSV = async (req, res) => {
     });
 };
 
-exports.getCSVData = async (req, res) => {
-  // get first 10 rows from csv file
-  const fileExists = fs.existsSync(
-    path.join(__dirname, `../timetableCsv/timetable_manip.csv`)
-  );
-  if (!fileExists) {
-    return res.status(400).json({ message: "File does not exist" });
-  }
-  const csvFile = fs.createReadStream(
-    path.join(__dirname, `../timeTableCsv/timetable_manip.csv`)
-  );
-  const csvData = [];
-  csvFile
-    .pipe(csvParser())
-    .on("data", (row) => {
-      csvData.push(row);
-    })
-    .on("end", () => {
-      const csvData10 = csvData.slice(0, 10);
-      return res.status(200).json({ csvData10 });
-    });
-};
-
 exports.saveTimetable = async (req, res) => {
   // save timetable to database
   const fileExists = fs.existsSync(
@@ -207,7 +224,8 @@ exports.saveTimetable = async (req, res) => {
   // start algorithm now
   try {
     const bookings = [];
-    for (let index = 1; index < 2; index++) {
+    for (let index = 1; index < 16; index++) {
+      console.log(index);
       const row = csvDataJson[index];
       const event = row._Event;
       const eventSplit = event.split(" ");
@@ -262,8 +280,8 @@ exports.saveTimetable = async (req, res) => {
 
       // get week range
       const weekRangeSplit = weekRange.split("-");
-      const weekStart = weekRangeSplit[0];
-      const weekEnd = weekRangeSplit[1];
+      const weekStart = weekRange.includes("-") ? weekRangeSplit[0] : weekRange;
+      const weekEnd = weekRange.includes("-") ? weekRangeSplit[1] : weekRange;
 
       // get time range
       const timeSplit = time.split("-");
@@ -271,34 +289,39 @@ exports.saveTimetable = async (req, res) => {
       const timeEnd = timeSplit[1];
 
       // then you will store values in each week on every that day via booking collection
-      for (let week = weekStart; week <= weekEnd; week++) {
-        let startDate = new Date(req.body.starting_date);
-        startDate.setDate(startDate.getDate() + (week - 1) * 7);
-        let endDate = new Date(req.body.starting_date);
-        endDate.setDate(endDate.getDate() + (weekEnd - 1) * 7);
-        const booking = {
-          user_id: "63bc283f2990ab07c1aebca0",
-          all_authorized:
-            // here we store staff id if available and group id if available
-            staffId ? [staffId] : [],
-          group_id: groupId,
-          activity: {
-            activity_name: `Learning`,
-            activity_description: `Learning ${module}`,
-            activity_recurrence: week > 1 ? "weekly" : "once",
-            activity_starting_date: startDate.toISOString().split("T")[0],
-            activity_ending_date: endDate.toISOString().split("T")[0],
-            activity_days: [getWeekDayNumber(day)],
-            activity_time: [
-              [convertTimeFormat(timeStart), convertTimeFormat(timeEnd)],
-            ],
-          },
-          room: "63bc283f2990ab07c1aebca0",
-          additional_info: "",
-          status: "confirmed",
-        };
-        bookings.push(booking);
-      }
+      // for (let week = weekStart; week <= weekEnd; week++) {
+      let startDate = new Date(req.body.starting_date);
+      startDate.setDate(startDate.getDate() + (weekStart - 1) * 7);
+      let endDate = new Date(req.body.starting_date);
+      endDate.setDate(endDate.getDate() + (weekEnd - 1) * 7);
+      // get numbers of weeks between start date and end date
+      const weeks = Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24 * 7)
+      );
+      const booking = {
+        user_id: "63bc283f2990ab07c1aebca0",
+        all_authorized:
+          // here we store staff id if available and group id if available
+          staffId ? [staffId] : [],
+        group_id: groupId,
+        activity: {
+          activity_name: module,
+          activity_description: `Learning ${module}`,
+          activity_recurrence: weeks > 1 ? "weekly" : "once",
+          activity_starting_date: startDate.toISOString().split("T")[0],
+          activity_ending_date: endDate.toISOString().split("T")[0],
+          activity_days: [getWeekDayNumber(day)],
+          activity_time: [
+            [convertTimeFormat(timeStart), convertTimeFormat(timeEnd)],
+          ],
+        },
+        room: "63bc283f2990ab07c1aebca0",
+        additional_info: "",
+        status: "confirmed",
+        flag: 0,
+      };
+      bookings.push(booking);
+      // }
     }
 
     // save bookings to database
@@ -319,7 +342,7 @@ exports.saveTimetable = async (req, res) => {
 
 function getWeekDayNumber(value) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const correspondingNumber = [1, 2, 3, 4, 5, 6, 7];
+  const correspondingNumber = [1, 2, 3, 4, 5, 6, 0];
   return correspondingNumber[days.indexOf(value)];
 }
 

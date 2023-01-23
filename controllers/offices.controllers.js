@@ -88,19 +88,24 @@ exports.createOffice = async (req, res) => {
     coordinates: req.body.coordinates || [0, 0],
     capacity: req.body.capacity,
     responsible: req.body.responsible,
-    working_days: req.body.working_days,
-    working_hours: req.body.working_hours,
+    schedules: req.body.schedules,
     img_url: req.body.img_url || null,
     added_on: Date.now(),
   });
 
   newOffice
     .save()
-    .then((office) => res.status(201).json(office))
+    .then((_office) =>
+      res.status(201).json({ message: "Office created", statusCode: 201 })
+    )
     .catch((err) =>
       res
         .status(400)
-        .json({ message: "Invalid office object", error: err.message })
+        .json({
+          message: "Invalid office object",
+          statusCode: 400,
+          error: err.message,
+        })
     );
 };
 
@@ -109,11 +114,17 @@ exports.removeOffice = async (req, res) => {
     status: "inactive",
   })
     .then((_response) =>
-      res.status(204).json({ result: "success", message: "Office removed" })
+      res
+        .status(204)
+        .json({ result: "success", statusCode: 204, message: "Office removed" })
     )
     .catch((err) =>
       res
         .status(400)
-        .json({ message: "Invalid office object", error: err.message })
+        .json({
+          message: "Invalid office object",
+          statusCode: 400,
+          error: err.message,
+        })
     );
 };

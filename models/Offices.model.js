@@ -85,37 +85,20 @@ const OfficesSchema = new mongoose.Schema({
   },
   capacity: {
     type: Number,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return /^[0-9]{1,2}$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid office capacity!`,
-    },
+    required: false,
   },
-  working_days: {
+  schedules: {
     type: Array,
     required: true,
-    validate: {
-      validator: function (v) {
-        // use numbers 1 to 7 to represent days of the week
-        return /^\[(?:[1-7])(?:\,([1-7]))*\]$/.test(JSON.stringify(v));
-      },
-      message: (props) => `${props.value} is not a valid working days!`,
-    },
-  },
-  working_hours: {
-    type: Array,
-    required: true,
-    validate: {
-      validator: function (v) {
-        // use ["08:00", "17:00"] format
-        return /^\[(?:"[0-2][0-9]:[0-5][0-9]")(?:\,("[0-2][0-9]:[0-5][0-9]"))*\]$/.test(
-          JSON.stringify(v)
-        );
-      },
-      message: (props) => `${props.value} is not a valid working hours!`,
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     // validate array of schedules in the format of [[dayNumber,start,end], [dayNumber,start,end], ...] not more than 7 arrays (spaces after commas are optional)
+    //     return /^\[\[(\d+),\s?"(\d{2}:\d{2})",\s?"(\d{2}:\d{2})"\],\s?(\[\d+,\s?"(\d{2}:\d{2})",\s?"(\d{2}:\d{2})"\])*\]$/.test(
+    //       JSON.stringify(v)
+    //     );
+    //   },
+    //   message: (props) => `${props.value} is not a valid weekly schedule!`,
+    // },
   },
   image_url: {
     type: String,

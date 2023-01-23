@@ -69,8 +69,7 @@ router.get("/:id", getOfficeById);
  *              - office_building_location
  *              - building_floor
  *              - office_type
- *              - working_days
- *              - working_hours
+ *              - schedules
  *          properties:
  *              office_name:
  *                  type: string
@@ -99,12 +98,9 @@ router.get("/:id", getOfficeById);
  *                  type: integer
  *                  format: int64
  *                  description: Someone who is responsible for a certain office (use the users endpoint to get the id)
- *              working_days:
+ *              schedules:
  *                  type: Array
- *                  description: days of the week when the office is available (use enum values which are between 1-7)
- *              working_hours:
- *                  type: Array
- *                  description: hours when the office is open (use enum values which are between 00:00-23:59)
+ *                  description: weekly schedule when the office is open
  *              img_url:
  *                  type: string
  *                  description: url of the office image (optional)
@@ -117,8 +113,7 @@ router.get("/:id", getOfficeById);
  *              coordinates: [-1.962621,30.064461]
  *              capacity: 2
  *              responsible: 63befca5ba573592f077b7d2
- *              working_days: [1,2,3,4,5]
- *              working_hours: [08:00,17:00]
+ *              schedules: [[1,09:00,17:00],[2,09:00,15:00]]
  *              img_url: https://res.cloudinary.com/julesntare/image/upload/v1673265264/rsu_cst_buildings/undraw_apartment_rent_o0ut_sj75zz.png
  */
 
