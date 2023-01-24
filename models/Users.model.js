@@ -6,7 +6,8 @@ const UsersSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (v) {
-        return /^[a-zA-Z ]{2,30}$/.test(v);
+        // add also symbols like . and ' to the name
+        return /^[A-Za-z .'-]{2,}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid name!`,
     },
@@ -67,6 +68,21 @@ const UsersSchema = new mongoose.Schema({
         return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) => `${props.value} is not a valid role!`,
+    },
+  },
+  department: {
+    type: String,
+    required: false,
+    reference: {
+      type: mongoose.Schema.Types.ObjectId,
+      model: "Departments",
+    },
+    default: null,
+    validate: {
+      validator: function (v) {
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid department reference!`,
     },
   },
   added_on: {

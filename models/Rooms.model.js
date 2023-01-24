@@ -5,12 +5,12 @@ const RoomsSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    validate: {
-      validator: function (v) {
-        return /^[a-zA-Z0-9 ]{3,30}$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid room name!`,
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     return /^[a-zA-Z0-9 ]{3,30}$/.test(v);
+    //   },
+    //   message: (props) => `${props.value} is not a valid room name!`,
+    // },
   },
   room_description: {
     type: String,
@@ -18,18 +18,19 @@ const RoomsSchema = new mongoose.Schema({
   },
   room_building: {
     type: String,
+    default: null,
     reference: {
       type: mongoose.Schema.Types.ObjectId,
       model: "Buildings",
     },
-    required: true,
-    validate: {
-      validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
-      },
-      message: (props) =>
-        `${props.value} is not a valid building reference format!`,
-    },
+    // required: false,
+    // validate: {
+    //   validator: function (v) {
+    //     return /^[0-9a-fA-F]{24}$/.test(v);
+    //   },
+    //   message: (props) =>
+    //     `${props.value} is not a valid building reference format!`,
+    // },
   },
   room_floor: {
     type: Number,
@@ -47,7 +48,7 @@ const RoomsSchema = new mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return /^[0-9]{2,}$/.test(v);
+        return /^[0-9]{1,}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid room capacity!`,
     },
@@ -66,7 +67,7 @@ const RoomsSchema = new mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) =>
         `${props.value} is not a valid room responsible reference format!`,

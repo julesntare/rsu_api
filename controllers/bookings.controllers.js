@@ -17,6 +17,14 @@ exports.getAllBookings = async (_req, res) => {
     );
 };
 
+exports.getAnyBookings = async (_req, res) => {
+  BookingsSchema.find()
+    .then((booking) => res.json(booking))
+    .catch((err) =>
+      res.status(404).json({ message: "Booking not found", error: err.message })
+    );
+};
+
 exports.getBookingById = async (req, res) => {
   BookingsSchema.findById(req.params.id)
     .then((booking) => res.json(booking))

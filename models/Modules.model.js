@@ -8,7 +8,9 @@ const ModulesSchema = new mongoose.Schema({
     validate: {
       validator: function (v) {
         // accept only letters, numbers, symbols, spaces, and dashes
-        return /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{3,100}$/.test(v);
+        return /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{3,100}$/.test(
+          v
+        );
       },
       message: (props) => `${props.value} is not a valid module name!`,
     },
@@ -17,16 +19,27 @@ const ModulesSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  year: {
+    type: Number,
+    required: false,
+    default: null,
+    validate: {
+      validator: function (v) {
+        return /^([1-5]{1}|null)$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid module year!`,
+    },
+  },
   module_code: {
     type: String,
     required: false,
-    unique: true,
-    validate: {
-      validator: function (v) {
-        return /^[a-zA-Z]{3}[0-9]{4}$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid module code!`,
-    },
+    default: null,
+    // validate: {
+    //   validator: function (v) {
+    //     return /^([a-zA-Z]{1}[0-9]{4}|null)$/.test(v);
+    //   },
+    //   message: (props) => `${props.value} is not a valid module code!`,
+    // },
   },
   department: {
     type: String,
@@ -34,10 +47,11 @@ const ModulesSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       model: "Departments",
     },
-    required: true,
+    required: false,
+    default: null,
     validate: {
       validator: function (v) {
-        return /^[0-9a-fA-F]{24}$/.test(v);
+        return /^([0-9a-fA-F]{24}|null)$/.test(v);
       },
       message: (props) =>
         `${props.value} is not a valid department reference format!`,

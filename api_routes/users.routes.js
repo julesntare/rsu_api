@@ -1,7 +1,23 @@
 const express = require("express");
-const { getAllUsers, getUserById, getUserByRole, updateUser, deleteUser, changeStatus, changePassword, changeRole, changeEmail, changePhone, searchUserByAny } = require("../controllers/users.controllers");
+const {
+  getAllUsers,
+  getUserById,
+  getUserByRole,
+  updateUser,
+  deleteUser,
+  changeStatus,
+  changePassword,
+  changeRole,
+  changeEmail,
+  changePhone,
+  searchUserByAny,
+} = require("../controllers/users.controllers");
 const router = express.Router();
-const { verifyToken, verifyUser, verifyAdmin } = require("../middlewares/authJWT.middleware");
+const {
+  verifyToken,
+  verifyUser,
+  verifyAdmin,
+} = require("../middlewares/authJWT.middleware");
 
 /**
  * @swagger
@@ -10,6 +26,7 @@ const { verifyToken, verifyUser, verifyAdmin } = require("../middlewares/authJWT
  *      summary: Request all users.
  *      tags:
  *          - User endpoints
+ *      security: []
  *      parameters: []
  *      responses:
  *          200:
@@ -19,7 +36,7 @@ const { verifyToken, verifyUser, verifyAdmin } = require("../middlewares/authJWT
  *          500:
  *              description: Internal server error
  */
-router.get("/all", verifyToken, verifyUser, getAllUsers);
+router.get("/all", getAllUsers);
 
 /**
  * @swagger
@@ -302,7 +319,7 @@ router.put("/:id/change/mobile", verifyToken, verifyUser, changePhone);
  *              description: Users not found
  *          500:
  *              description: Internal Server Error
- */ 
+ */
 router.get("/search/:keyword", verifyToken, verifyUser, searchUserByAny);
 
 module.exports = router;

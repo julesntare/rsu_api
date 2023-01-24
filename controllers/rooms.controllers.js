@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const BuildingsModel = require("../models/Buildings.model");
+const RoomsModel = require("../models/Rooms.model");
 const RoomModel = require("../models/Rooms.model");
 const RoomTypesModel = require("../models/RoomTypes.model");
 const UsersModel = require("../models/Users.model");
@@ -70,87 +71,125 @@ exports.getRoomById = async (req, res) => {
 };
 
 exports.createRoom = async (req, res) => {
-  if (!req.body) {
-    return res.status(400).json({
-      message: "Room content can not be empty",
-      statusCode: 400,
+  let rooms = [],
+    building_id = null;
+  for (let i = 0; i < req.body.length; i++) {
+    // check building id by building name (search includes name keywords)
+    if (req.body[i].room_building !== null) {
+      const building = await BuildingsModel.findOne({
+        building_name: { $regex: req.body[i].room_building, $options: "i" },
+      }).catch((err) => {
+        res.status(400).json({
+          message: "Invalid building name",
+          statusCode: 400,
+          error: err.message,
+        });
+      });
+
+    if (building) {
+      building_id = building._id;
+    }
+  }
+
+    rooms.push({
+      room_name: req.body[i].room_name,
+      room_building: building_id,
+      room_floor: req.body[i].room_floor,
+      capacity: req.body[i].capacity,
+      has_fixed_seats: req.body[i].has_fixed_seats,
+      room_type: req.body[i].room_type,
     });
   }
 
-  // check if building id, room_type, responsible are available
-  const building = await BuildingsModel.findById({
-    _id: mongoose.Types.ObjectId(req.body.room_building),
-  }).catch((err) => {
-    res.status(400).json({
-      message: "Invalid building id",
-      statusCode: 400,
-      error: err.message,
-    });
-  });
-
-  const roomType = await RoomTypesModel.findById({
-    _id: mongoose.Types.ObjectId(req.body.room_type),
-  }).catch((err) => {
-    res.status(400).json({
-      message: "Invalid room type id",
-      statusCode: 400,
-      error: err.message,
-    });
-  });
-
-  const responsible = await UsersModel.findById({
-    _id: mongoose.Types.ObjectId(req.body.responsible),
-  }).catch((err) => {
-    res.status(400).json({
-      message: "Invalid responsible id",
-      statusCode: 400,
-      error: err.message,
-    });
-  });
-
-  if (!building || !roomType || !responsible) {
-    return res.status(400).json({
-      message: "Invalid building, room type or responsible user",
-      statusCode: 400,
-    });
-  }
-
-  console.log(building.floors, req.body.room_floor);
-  // check if floor is equal to building floor
-  if (building.floors - 1 < req.body.room_floor) {
-    return res.status(400).json({
-      message: "Room Floor has to be equal or less to building's total floor",
-      statusCode: 400,
-    });
-  }
-
-  const newRoom = new RoomModel({
-    room_name: req.body.room_name,
-    room_description: req.body.room_description,
-    room_type: req.body.room_type,
-    room_building: req.body.room_building,
-    room_floor: req.body.room_floor,
-    capacity: req.body.capacity,
-    resources: req.body.resources,
-    has_fixed_seats: req.body.has_fixed_seats,
-    responsible: req.body.responsible,
-    added_on: Date.now(),
-  });
-
-  newRoom
-    .save()
-    .then((_room) =>
-      res
-        .status(201)
-        .json({ message: "Added Room Successfully", statusCode: 201 })
-    )
+  RoomsModel.insertMany(rooms)
+    .then((room) => res.status(201).json({ message: "Room created" }))
     .catch((err) =>
       res.status(400).json({
-        message: "Invalid room object",
+        message: "Room not created",
         statusCode: 400,
         error: err.message,
       })
     );
+
+  // if (!req.body) {
+  //   return res.status(400).json({
+  //     message: "Room content can not be empty",
+  //     statusCode: 400,
+  //   });
+  // }
+
+  // // check if building id, room_type, responsible are available
+  // const building = await BuildingsModel.findById({
+  //   _id: mongoose.Types.ObjectId(req.body.room_building),
+  // }).catch((err) => {
+  //   res.status(400).json({
+  //     message: "Invalid building id",
+  //     statusCode: 400,
+  //     error: err.message,
+  //   });
+  // });
+
+  // const roomType = await RoomTypesModel.findById({
+  //   _id: mongoose.Types.ObjectId(req.body.room_type),
+  // }).catch((err) => {
+  //   res.status(400).json({
+  //     message: "Invalid room type id",
+  //     statusCode: 400,
+  //     error: err.message,
+  //   });
+  // });
+
+  // const responsible = await UsersModel.findById({
+  //   _id: mongoose.Types.ObjectId(req.body.responsible),
+  // }).catch((err) => {
+  //   res.status(400).json({
+  //     message: "Invalid responsible id",
+  //     statusCode: 400,
+  //     error: err.message,
+  //   });
+  // });
+
+  // if (!building || !roomType || !responsible) {
+  //   return res.status(400).json({
+  //     message: "Invalid building, room type or responsible user",
+  //     statusCode: 400,
+  //   });
+  // }
+  // // check if floor is equal to building floor
+  // if (building.floors - 1 < req.body.room_floor) {
+  //   return res.status(400).json({
+  //     message: "Room Floor has to be equal or less to building's total floor",
+  //     statusCode: 400,
+  //   });
+  // }
+
+  // const newRoom = new RoomModel({
+  //   room_name: req.body.room_name,
+  //   room_description: req.body.room_description,
+  //   room_type: req.body.room_type,
+  //   room_building: req.body.room_building,
+  //   room_floor: req.body.room_floor,
+  //   capacity: req.body.capacity,
+  //   resources: req.body.resources,
+  //   has_fixed_seats: req.body.has_fixed_seats,
+  //   responsible: req.body.responsible,
+  //   added_on: Date.now(),
+  // });
+
+  // newRoom
+  //   .save()
+  //   .then((_room) =>
+  //     res
+  //       .status(201)
+  //       .json({ message: "Added Room Successfully", statusCode: 201 })
+  //   )
+  //   .catch((err) =>
+  //     res.status(400).json({
+  //       message: "Invalid room object",
+  //       statusCode: 400,
+  //       error: err.message,
+  //     })
+  //   );
 };
 
 exports.removeRoom = async (req, res) => {

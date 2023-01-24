@@ -15,8 +15,24 @@ exports.register = async (req, res) => {
     const user = await UsersModel.findOne({ email: req.body.email });
 
     if (user) {
-      return res.status(400).json({ message: "User already exists", statusCode: 400 });
+      return res
+        .status(400)
+        .json({ message: "User already exists", statusCode: 400 });
     }
+
+    // if department not empty, check if it exists
+    if (req.body.department) {
+      const departmentExists = await DepartmentsModel.findOne({
+        _id: req.body.department,
+      });
+      if (!departmentExists) {
+        return res.status(400).json({
+          message: "Department does not exist",
+          statusCode: 400,
+        });
+      }
+    }
+
     // hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -29,10 +45,15 @@ exports.register = async (req, res) => {
       mobile_no: req.body.mobile_no,
       password: hashedPassword,
       user_role: req.body.user_role,
+      department: req.body.department || null,
     });
     // save user and return response
     const userResult = await newUser.save();
-    res.status(201).json({ message: "User created successfully", userResult, statusCode: 201 });
+    res.status(201).json({
+      message: "User created successfully",
+      userResult,
+      statusCode: 201,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message, statusCode: 500 });
@@ -43,7 +64,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     // find user
-    const user = await UsersModel.findOne({ email: req.body.email});
+    const user = await UsersModel.findOne({ email: req.body.email });
     // if user not found
     if (!user) {
       return res.status(404).json({ status: 404, message: "User not found" });
@@ -59,7 +80,11 @@ exports.login = async (req, res) => {
     }
     // if password matched
     // create a token
-    const token = jwt.sign({ user: user._id, userRole: user.user_role }, RSU_SECRET, { expiresIn: "7 days" });
+    const token = jwt.sign(
+      { user: user._id, userRole: user.user_role },
+      RSU_SECRET,
+      { expiresIn: "7 days" }
+    );
 
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });

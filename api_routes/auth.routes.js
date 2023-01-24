@@ -1,6 +1,9 @@
 const express = require("express");
 const { login, register, logout } = require("../controllers/auth.controllers");
-const { verifyToken, verifyAdmin } = require("../middlewares/authJWT.middleware");
+const {
+  verifyToken,
+  verifyAdmin,
+} = require("../middlewares/authJWT.middleware");
 const router = express.Router();
 
 /**
@@ -14,6 +17,7 @@ const router = express.Router();
  *          - mobile_no
  *          - password
  *          - user_role
+ *          - department
  *      properties:
  *          fullname:
  *                  type: string
@@ -34,6 +38,10 @@ const router = express.Router();
  *                  type: integer
  *                  format: int64
  *                  description: Provide Role ID. (use roles endpoint to get available roles)
+ *          department:
+ *                  type: string
+ *                  format: int64
+ *                  description: Provide Department ID. (use departments endpoint to get available departments)
  *      example:
  *          fullname: John Doe
  *          title: System Admin
@@ -41,6 +49,7 @@ const router = express.Router();
  *          mobile_no: "0788888888"
  *          password: jodT^O3)@22
  *          user_role: 6377ecba5eeae9ff7c42423e
+ *          department: 6377ecba5eeae9ff7c42423e
  */
 
 /**

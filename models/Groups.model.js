@@ -7,7 +7,7 @@ const GroupsSchema = new mongoose.Schema({
     unique: true,
     validation: {
       validator: function (v) {
-        return /^[a-zA-Z0-9 ]{2,30}$/.test(v);
+        return /^[a-zA-Z0-9 ()]{2,30}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid group name!`,
     },
@@ -48,10 +48,11 @@ const GroupsSchema = new mongoose.Schema({
       model: "Users",
     },
     required: false,
+    default: null,
     validate: {
       validator: function (v) {
         // accept reference or null
-        return /^[0-9a-fA-F]{24}$/.test(v) || v === null;
+        return /^([0-9a-fA-F]{24}|null)$/.test(v) || v === null;
       },
       message: (props) =>
         `${props.value} is not a valid class presenter reference format!`,
@@ -60,10 +61,11 @@ const GroupsSchema = new mongoose.Schema({
   class_size: {
     type: Number,
     required: false,
+    default: null,
     validate: {
       validator: function (v) {
         // accept also a null value
-        return /^[0-9]{1,5}$/.test(v) || v === null;
+        return /^([0-9]{1,5}|null)$/.test(v) || v === null;
       },
       message: (props) => `${props.value} is not a valid class size!`,
     },

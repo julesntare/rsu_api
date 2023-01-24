@@ -3,6 +3,7 @@ const {
   getAllBookings,
   getBookingById,
   createBooking,
+  getAnyBookings
 } = require("../controllers/bookings.controllers");
 const { verifyToken, verifyUser } = require("../middlewares/authJWT.middleware");
 
@@ -26,6 +27,24 @@ const router = express.Router();
  *              description: Internal server error
  */
 router.get("/all", getAllBookings);
+/**
+ * @swagger
+ * /api/bookings/any:
+ *  get:
+ *      summary: Request any bookings.
+ *      tags:
+ *          - Booking endpoints
+ *      security: []
+ *      parameters: []
+ *      responses:
+ *          200:
+ *              description: Success
+ *          404:
+ *              description: Not found
+ *          500:
+ *              description: Internal server error
+ */
+router.get("/any", getAnyBookings);
 
 /**
  * @swagger
