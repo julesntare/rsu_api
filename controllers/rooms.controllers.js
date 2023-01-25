@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const moment = require("moment-timezone");
+const BookingsModel = require("../models/Bookings.model");
 const BuildingsModel = require("../models/Buildings.model");
 const RoomsModel = require("../models/Rooms.model");
 const RoomModel = require("../models/Rooms.model");
@@ -43,11 +45,14 @@ exports.getAllRooms = async (_req, res) => {
           });
         });
 
+        const roomStatusObj = await getRoomStatus(r._id.toString());
+
         return {
           ...r._doc,
           room_building: building,
           room_type: roomType,
           responsible: responsible,
+          room_status: roomStatusObj,
         };
       });
 
@@ -86,10 +91,10 @@ exports.createRoom = async (req, res) => {
         });
       });
 
-    if (building) {
-      building_id = building._id;
+      if (building) {
+        building_id = building._id;
+      }
     }
-  }
 
     rooms.push({
       room_name: req.body[i].room_name,
@@ -110,86 +115,6 @@ exports.createRoom = async (req, res) => {
         error: err.message,
       })
     );
-
-  // if (!req.body) {
-  //   return res.status(400).json({
-  //     message: "Room content can not be empty",
-  //     statusCode: 400,
-  //   });
-  // }
-
-  // // check if building id, room_type, responsible are available
-  // const building = await BuildingsModel.findById({
-  //   _id: mongoose.Types.ObjectId(req.body.room_building),
-  // }).catch((err) => {
-  //   res.status(400).json({
-  //     message: "Invalid building id",
-  //     statusCode: 400,
-  //     error: err.message,
-  //   });
-  // });
-
-  // const roomType = await RoomTypesModel.findById({
-  //   _id: mongoose.Types.ObjectId(req.body.room_type),
-  // }).catch((err) => {
-  //   res.status(400).json({
-  //     message: "Invalid room type id",
-  //     statusCode: 400,
-  //     error: err.message,
-  //   });
-  // });
-
-  // const responsible = await UsersModel.findById({
-  //   _id: mongoose.Types.ObjectId(req.body.responsible),
-  // }).catch((err) => {
-  //   res.status(400).json({
-  //     message: "Invalid responsible id",
-  //     statusCode: 400,
-  //     error: err.message,
-  //   });
-  // });
-
-  // if (!building || !roomType || !responsible) {
-  //   return res.status(400).json({
-  //     message: "Invalid building, room type or responsible user",
-  //     statusCode: 400,
-  //   });
-  // }
-  // // check if floor is equal to building floor
-  // if (building.floors - 1 < req.body.room_floor) {
-  //   return res.status(400).json({
-  //     message: "Room Floor has to be equal or less to building's total floor",
-  //     statusCode: 400,
-  //   });
-  // }
-
-  // const newRoom = new RoomModel({
-  //   room_name: req.body.room_name,
-  //   room_description: req.body.room_description,
-  //   room_type: req.body.room_type,
-  //   room_building: req.body.room_building,
-  //   room_floor: req.body.room_floor,
-  //   capacity: req.body.capacity,
-  //   resources: req.body.resources,
-  //   has_fixed_seats: req.body.has_fixed_seats,
-  //   responsible: req.body.responsible,
-  //   added_on: Date.now(),
-  // });
-
-  // newRoom
-  //   .save()
-  //   .then((_room) =>
-  //     res
-  //       .status(201)
-  //       .json({ message: "Added Room Successfully", statusCode: 201 })
-  //   )
-  //   .catch((err) =>
-  //     res.status(400).json({
-  //       message: "Invalid room object",
-  //       statusCode: 400,
-  //       error: err.message,
-  //     })
-  //   );
 };
 
 exports.removeRoom = async (req, res) => {
@@ -208,4 +133,144 @@ exports.removeRoom = async (req, res) => {
         error: err.message,
       })
     );
+};
+
+const getRoomStatus = async (roomId) => {
+  const now = moment(new Date()).valueOf();
+  let result = {
+    value: 1,
+    timeRange: [],
+  };
+
+  await BookingsModel.find({
+    room: roomId,
+    status: "confirmed",
+  })
+    .then((bookings) => {
+      // check if bookings array is empty
+      if (bookings.length > 0) {
+        result = {
+          value: 1,
+          timeRange: [],
+        };
+        bookings.map(async (booking) => {
+          if (booking.activity.activity_recurrence === "once") {
+            // check if activity_starting_date is equal to today
+            const activityStartingDate = new Date(
+              booking.activity.activity_starting_date
+            );
+            if (
+              activityStartingDate === new Date().toISOString().slice(0, 10)
+            ) {
+              const activityTime = booking.activity.activity_time;
+              // iterate in activity time array
+              activityTime.forEach((time) => {
+                // check if now is between timestamps of ["08:00", "10:00"]	time format
+                const activityTimeStart = new Date(
+                  `1970-01-01T${time[0]}`
+                ).getTime();
+                const activityTimeEnd = new Date(
+                  `1970-01-01T${time[1]}`
+                ).getTime();
+                if (now >= activityTimeStart && now <= activityTimeEnd) {
+                  result = {
+                    value: 0,
+                    timeRange: [
+                      `${activityStartingDate}T${time[0]}`,
+                      `${activityStartingDate}T${time[1]}`,
+                    ],
+                  };
+                }
+              });
+            }
+          } else if (
+            booking.activity.activity_recurrence === "weekly" ||
+            booking.activity.activity_recurrence === "monthly" ||
+            booking.activity.activity_recurrence === "certain_days"
+          ) {
+            // check if activity_starting_date is equal to today
+            const activityStartingDate =
+              booking.activity.activity_starting_date;
+            if (
+              activityStartingDate === new Date().toISOString().split("T")[0]
+            ) {
+              const activityTime = booking.activity.activity_time;
+              // iterate in activity time array
+              activityTime.forEach((time) => {
+                // check if now is between timestamps of ["08:00", "10:00"]	time format
+                const activityTimeStart = new Date(
+                  `${activityStartingDate}T${time[0]}`
+                ).getTime();
+                const activityTimeEnd = new Date(
+                  `${activityStartingDate}T${time[1]}`
+                ).getTime();
+                if (now >= activityTimeStart && now <= activityTimeEnd) {
+                  console.log(activityStartingDate);
+                  result = {
+                    value: 0,
+                    timeRange: [
+                      `${activityStartingDate}T${time[0]}`,
+                      `${activityStartingDate}T${time[1]}`,
+                    ],
+                  };
+                }
+              });
+            }
+            // iterate through activity.activity_days array by increasing starting date by day specified in activity.activity_days array till activity.activity_ending_date
+            activityDays = booking.activity.activity_days;
+            activityDays.forEach((day) => {
+              // check if starting date weekly|monthly is equal to day
+              const today = new Date(
+                // if weekly, add 7 days to starting date
+                booking.activity.activity_recurrence === "weekly"
+                  ? new Date(booking.activity.activity_starting_date).setDate(
+                      new Date(
+                        booking.activity.activity_starting_date
+                      ).getDate() + 7
+                    )
+                  : // if monthly, add 30 days to starting date
+                  booking.activity.activity_recurrence === "monthly"
+                  ? new Date(booking.activity.activity_starting_date).setDate(
+                      new Date(
+                        booking.activity.activity_starting_date
+                      ).getDate() + 30
+                    )
+                  : // if certain_days, add day to starting date
+                    new Date(booking.activity.activity_starting_date).setDate(
+                      new Date(
+                        booking.activity.activity_starting_date
+                      ).getDate() + day
+                    )
+              ).getDay();
+              if (today === day) {
+                // iterate through activity.activity_time check if now is between two string time range
+                const activityTime = booking.activity.activity_time;
+                // iterate in activity time array
+                activityTime.forEach((time) => {
+                  // check if now is between timestamps of ["08:00", "10:00"]	time format
+                  const activityTimeStart = new Date(
+                    `1970-01-01T${time[0]}`
+                  ).getTime();
+                  const activityTimeEnd = new Date(
+                    `1970-01-01T${time[1]}`
+                  ).getTime();
+                  if (now >= activityTimeStart && now <= activityTimeEnd) {
+                    result = {
+                      value: 0,
+                      timeRange: [
+                        `${activityStartingDate}T${time[0]}`,
+                        `${activityStartingDate}T${time[1]}`,
+                      ],
+                    };
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    })
+    .catch((err) => console.log(err));
+
+  return result;
 };

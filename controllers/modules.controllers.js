@@ -5,18 +5,6 @@ const { default: mongoose } = require("mongoose");
 exports.getAllModules = async (req, res) => {
   try {
     const modules = await ModulesModel.find({});
-    modules.map(async (module) => {
-      await DepartmentsModel.findById(module.department, (err, department) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Error finding department",
-            error: err,
-          });
-        }
-        module.department = department;
-      });
-      module.department = module.department.toString();
-    });
     res.status(200).json(modules);
   } catch (error) {
     res.status(500).json(error);

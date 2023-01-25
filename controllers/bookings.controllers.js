@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
+const moment = require("moment-timezone");
 const BookingsSchema = require("../models/Bookings.model");
 const UserSchema = require("../models/Users.model");
 const RoomSchema = require("../models/Rooms.model");
+
+moment.tz.setDefault("Africa/Kigali");
 
 exports.getAllBookings = async (_req, res) => {
   BookingsSchema.find({
@@ -32,6 +35,147 @@ exports.getBookingById = async (req, res) => {
       res
         .status(404)
         .json({ message: "No Booking not found", error: err.message })
+    );
+};
+
+exports.getRoomStatus = async (req, res) => {
+  const roomId = req.params.id;
+  const now = moment(new Date()).valueOf();
+
+  // 1. search where room_id is equal to roomId and status is confirmed
+  // 2. iterate through each activity's activity.recurrence if it is weekly or monthly or certain_days according to activity.activity_days array
+  // 3. check if activity_starting_date is equal to today
+  // 4. iterate through activity.activity_time check if now is between two string time range
+  // 5. if yes, return room is busy
+
+  BookingsSchema.find({
+    room: roomId,
+    status: "confirmed",
+  })
+    .then((bookings) => {
+      bookings.map(async (booking) => {
+        if (booking.activity.activity_recurrence === "once") {
+          // check if activity_starting_date is equal to today
+          const activityStartingDate = new Date(
+            booking.activity.activity_starting_date
+          );
+          if (activityStartingDate === new Date().toISOString().slice(0, 10)) {
+            const activityTime = booking.activity.activity_time;
+            // iterate in activity time array
+            activityTime.forEach((time) => {
+              // check if now is between timestamps of ["08:00", "10:00"]	time format
+              const activityTimeStart = new Date(
+                `1970-01-01T${time[0]}`
+              ).getTime();
+              const activityTimeEnd = new Date(
+                `1970-01-01T${time[1]}`
+              ).getTime();
+              if (now >= activityTimeStart && now <= activityTimeEnd) {
+                return {
+                  ...booking._doc,
+                  room_status: 0,
+                };
+              }
+            });
+          }
+        } else if (
+          booking.activity.activity_recurrence === "weekly" ||
+          booking.activity.activity_recurrence === "monthly" ||
+          booking.activity.activity_recurrence === "certain_days"
+        ) {
+          // check if activity_starting_date is equal to today
+          const activityStartingDate = booking.activity.activity_starting_date;
+          if (activityStartingDate === new Date().toISOString().split("T")[0]) {
+            const activityTime = booking.activity.activity_time;
+            // iterate in activity time array
+            activityTime.forEach((time) => {
+              // check if now is between timestamps of ["08:00", "10:00"]	time format
+              const activityTimeStart = new Date(
+                `${activityStartingDate}T${time[0]}`
+              ).getTime();
+              const activityTimeEnd = new Date(
+                `${activityStartingDate}T${time[1]}`
+              ).getTime();
+              if (now >= activityTimeStart && now <= activityTimeEnd) {
+                return res.status(200).json({
+                  room_status: 0,
+                  timeRange: [
+                    `${activityStartingDate}T${time[0]}`,
+                    `${activityStartingDate}T${time[1]}`,
+                  ],
+                });
+              }
+              return res.status(200).json({
+                room_status: 1,
+                timeRange: [
+                  `${activityStartingDate}T${time[0]}`,
+                  `${activityStartingDate}T${time[1]}`,
+                ],
+              });
+            });
+          }
+          // iterate through activity.activity_days array by increasing starting date by day specified in activity.activity_days array till activity.activity_ending_date
+          activityDays = booking.activity.activity_days;
+          activityDays.forEach((day) => {
+            // check if starting date weekly|monthly is equal to day
+            const today = new Date(
+              // if weekly, add 7 days to starting date
+              booking.activity.activity_recurrence === "weekly"
+                ? new Date(booking.activity.activity_starting_date).setDate(
+                    new Date(
+                      booking.activity.activity_starting_date
+                    ).getDate() + 7
+                  )
+                : // if monthly, add 30 days to starting date
+                booking.activity.activity_recurrence === "monthly"
+                ? new Date(booking.activity.activity_starting_date).setDate(
+                    new Date(
+                      booking.activity.activity_starting_date
+                    ).getDate() + 30
+                  )
+                : // if certain_days, add day to starting date
+                  new Date(booking.activity.activity_starting_date).setDate(
+                    new Date(
+                      booking.activity.activity_starting_date
+                    ).getDate() + day
+                  )
+            ).getDay();
+            if (today === day) {
+              // iterate through activity.activity_time check if now is between two string time range
+              const activityTime = booking.activity.activity_time;
+              // iterate in activity time array
+              activityTime.forEach((time) => {
+                // check if now is between timestamps of ["08:00", "10:00"]	time format
+                const activityTimeStart = new Date(
+                  `1970-01-01T${time[0]}`
+                ).getTime();
+                const activityTimeEnd = new Date(
+                  `1970-01-01T${time[1]}`
+                ).getTime();
+                if (now >= activityTimeStart && now <= activityTimeEnd) {
+                  return res.status(200).json({
+                    room_status: 0,
+                    timeRange: [
+                      `${activityStartingDate}T${time[0]}`,
+                      `${activityStartingDate}T${time[1]}`,
+                    ],
+                  });
+                }
+                return res.status(200).json({
+                  room_status: 1,
+                  timeRange: [
+                    `${activityStartingDate}T${time[0]}`,
+                    `${activityStartingDate}T${time[1]}`,
+                  ],
+                });
+              });
+            }
+          });
+        }
+      });
+    })
+    .catch((err) =>
+      res.status(404).json({ message: "Booking not found", error: err.message })
     );
 };
 

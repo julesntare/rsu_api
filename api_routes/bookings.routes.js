@@ -3,9 +3,13 @@ const {
   getAllBookings,
   getBookingById,
   createBooking,
-  getAnyBookings
+  getAnyBookings,
+  getRoomStatus,
 } = require("../controllers/bookings.controllers");
-const { verifyToken, verifyUser } = require("../middlewares/authJWT.middleware");
+const {
+  verifyToken,
+  verifyUser,
+} = require("../middlewares/authJWT.middleware");
 
 const router = express.Router();
 
@@ -69,6 +73,30 @@ router.get("/any", getAnyBookings);
  *              description: Internal Server Error
  */
 router.get("/:id", getBookingById);
+
+/**
+ * @swagger
+ * /api/bookings/room/status/{id}:
+ *  get:
+ *      summary: Get current status for a specific room.
+ *      tags:
+ *          - Booking endpoints
+ *      security: []
+ *      parameters:
+ *          -   name: id
+ *              in: path
+ *              required: true
+ *              schema:
+ *                 type: string
+ *      responses:
+ *          200:
+ *              description: Returned status for specified room (json format)
+ *          404:
+ *             description: Booking Not found
+ *          500:
+ *              description: Internal Server Error
+ */
+router.get("/room/status/:id", getRoomStatus);
 
 /**
  * @swagger

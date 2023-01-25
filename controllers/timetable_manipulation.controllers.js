@@ -225,7 +225,6 @@ exports.saveTimetable = async (req, res) => {
   try {
     const bookings = [];
     for (let index = 1; index < 16; index++) {
-      console.log(index);
       const row = csvDataJson[index];
       const event = row._Event;
       const eventSplit = event.split(" ");
@@ -235,13 +234,13 @@ exports.saveTimetable = async (req, res) => {
 
       const module = row._Module;
       const room = row._Room;
-      const staff = row._StaffSurname + " " + row._StaffForenames;
+      const staff = row._StaffForenames + " " + row._StaffSurname;
       const group = row._Group;
 
       // get module id
       let moduleId = null;
       const moduleExists = await ModulesModel.findOne({
-        module_name: module,
+        module_name: module.toLowerCase(),
       });
       if (moduleExists) {
         moduleId = moduleExists._id;
@@ -251,7 +250,7 @@ exports.saveTimetable = async (req, res) => {
       const roomSplit = room.split("_");
       const roomName = roomSplit[1];
       const roomExists = await RoomsModel.findOne({
-        room_name: roomName,
+        room_name: roomName.toLowerCase(),
       });
       let roomId = null;
       if (roomExists) {
@@ -262,8 +261,8 @@ exports.saveTimetable = async (req, res) => {
       const staffExists = await UsersModel.findOne({
         // check if combined staff name is found in database even if it is not in the same order
         $or: [
-          { fullname: staff },
-          { fullname: staff.split(" ").reverse().join(" ") },
+          { fullname: staff.toLowerCase() },
+          { fullname: staff.toLocaleLowerCase().split(" ").reverse().join(" ") },
         ],
       });
       let staffId = null;
@@ -272,7 +271,7 @@ exports.saveTimetable = async (req, res) => {
       }
 
       // get group id
-      const groupExists = await GroupsModel.findOne({ group_name: group });
+      const groupExists = await GroupsModel.findOne({ group_name: group.toLowerCase() });
       let groupId = null;
       if (groupExists) {
         groupId = groupExists._id;
@@ -299,7 +298,7 @@ exports.saveTimetable = async (req, res) => {
         (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24 * 7)
       );
       const booking = {
-        user_id: "63bc283f2990ab07c1aebca0",
+        user_id: staffId,
         all_authorized:
           // here we store staff id if available and group id if available
           staffId ? [staffId] : [],
@@ -315,7 +314,7 @@ exports.saveTimetable = async (req, res) => {
             [convertTimeFormat(timeStart), convertTimeFormat(timeEnd)],
           ],
         },
-        room: "63bc283f2990ab07c1aebca0",
+        room: roomId,
         additional_info: "",
         status: "confirmed",
         flag: 0,
