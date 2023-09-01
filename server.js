@@ -18,7 +18,7 @@ const groupsRoutes = require("./api_routes/groups.routes");
 const bookingsRoutes = require("./api_routes/bookings.routes");
 const csvRoute = require("./api_routes/timetable_manipulation.routes");
 const morgan = require("morgan");
-const {log} = require("mercedlogger");
+const { log } = require("mercedlogger");
 
 const app = express();
 
@@ -53,6 +53,9 @@ var options = {
     servers: [
       {
         url: `http://localhost:${PORT}`,
+      },
+      {
+        url: `https://rsu-api-mazg.onrender.com`,
       },
     ],
     components: {
