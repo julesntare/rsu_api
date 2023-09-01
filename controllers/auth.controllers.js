@@ -63,6 +63,8 @@ exports.register = async (req, res) => {
 
 // Login controller
 exports.login = async (req, res) => {
+  console.log(req.body);
+
   try {
     // find user
     const user = await UsersModel.findOne({ email: req.body.email });
@@ -92,9 +94,6 @@ exports.login = async (req, res) => {
       { expiresIn: "7 days" }
     );
 
-    // save token in redis
-    redisClient.set(user._id, refreshToken);
-
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });
 
@@ -115,6 +114,8 @@ exports.login = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({ message: error });
   }
 };
