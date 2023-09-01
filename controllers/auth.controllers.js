@@ -4,6 +4,7 @@ const sessionsModel = require("../models/Sessions.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const RolesModel = require("../models/Roles.model");
+const DepartmentsModel = require("../models/Departments.model");
 
 // express, jwt and mongoose user authentication
 const { RSU_SECRET } = process.env;
@@ -83,8 +84,16 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { user: user._id, userRole: user.user_role },
       RSU_SECRET,
+      { expiresIn: "10m" }
+    );
+    const refreshToken = jwt.sign(
+      { user: user._id, userRole: user.user_role },
+      RSU_SECRET,
       { expiresIn: "7 days" }
     );
+
+    // save token in redis
+    redisClient.set(user._id, refreshToken);
 
     // create a new session
     await sessionsModel.create({ user_id: user._id, session_token: token });
@@ -112,9 +121,18 @@ exports.login = async (req, res) => {
 
 // Logout controller
 exports.logout = async (req, res) => {
+  const userId = req.userData.user;
+
   try {
+    // delete token from redis
+    await redisClient.del(userId, (err, reply) => {
+      if (err) return res.status(500).json({ message: err });
+      return res.status(200).json({ message: reply });
+    });
+
     // delete session
     await sessionsModel.deleteOne({ session_token: req.body.token });
+
     // send response
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
