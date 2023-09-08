@@ -17,11 +17,8 @@ const OfficesSchema = new mongoose.Schema({
     required: false,
   },
   office_building_location: {
-    type: String,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Buildings",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Buildings",
     required: true,
     validate: {
       validator: function (v) {
@@ -57,11 +54,8 @@ const OfficesSchema = new mongoose.Schema({
     },
   },
   responsible: {
-    type: String,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Users",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
     required: false,
     validate: {
       validator: function (v) {

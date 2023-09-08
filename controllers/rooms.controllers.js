@@ -4,66 +4,16 @@ const BookingsModel = require("../models/Bookings.model");
 const BuildingsModel = require("../models/Buildings.model");
 const RoomsModel = require("../models/Rooms.model");
 const RoomModel = require("../models/Rooms.model");
-const RoomTypesModel = require("../models/RoomTypes.model");
-const UsersModel = require("../models/Users.model");
 
 exports.getAllRooms = async (_req, res) => {
   RoomModel.find({
     status: "active",
   })
     .sort({ added_on: -1 })
-    .then((room) => {
-      // get all info on each room_building, responsible, and room_type
-      const promises = room.map(async (r) => {
-        const building = await BuildingsModel.findById(
-          mongoose.Types.ObjectId(r.room_building)
-        ).catch((err) => {
-          res.status(400).json({
-            message: "Invalid building id",
-            statusCode: 400,
-            error: err.message,
-          });
-        });
-
-        const roomType = await RoomTypesModel.findById(
-          mongoose.Types.ObjectId(r.room_type)
-        ).catch((err) => {
-          res.status(400).json({
-            message: "Invalid room type id",
-            statusCode: 400,
-            error: err.message,
-          });
-        });
-
-        const responsible = await UsersModel.findById(
-          mongoose.Types.ObjectId(r.responsible)
-        ).catch((err) => {
-          res.status(400).json({
-            message: "Invalid responsible id",
-            statusCode: 400,
-            error: err.message,
-          });
-        });
-
-        const roomStatusObj = await getRoomStatus(r._id.toString());
-
-        return {
-          ...r._doc,
-          room_building: building,
-          room_type: roomType,
-          responsible: responsible,
-          room_status: roomStatusObj,
-        };
-      });
-
-      Promise.all(promises).then((results) => res.json(results));
-    })
+    .populate("room_building responsible room_type")
+    .then((rooms) => res.status(200).json(rooms))
     .catch((err) =>
-      res.status(404).json({
-        message: "No Room not found",
-        statusCode: 404,
-        error: err.message,
-      })
+      res.status(404).json({ message: "Rooms not found", error: err.message })
     );
 };
 

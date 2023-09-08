@@ -17,12 +17,9 @@ const RoomsSchema = new mongoose.Schema({
     required: false,
   },
   room_building: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Buildings",
     default: null,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Buildings",
-    },
     // required: false,
     // validate: {
     //   validator: function (v) {
@@ -59,11 +56,8 @@ const RoomsSchema = new mongoose.Schema({
     default: false,
   },
   responsible: {
-    type: String,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Users",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
     required: false,
     validate: {
       validator: function (v) {
@@ -74,11 +68,8 @@ const RoomsSchema = new mongoose.Schema({
     },
   },
   room_type: {
-    type: String,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "RoomTypes",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RoomTypes",
     required: true,
     validate: {
       validator: function (v) {

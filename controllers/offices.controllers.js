@@ -7,37 +7,11 @@ exports.getAllOffices = async (_req, res) => {
   OfficesModel.find({
     status: "active",
   })
-    .then((office) => {
-      const promises = office.map(async (o) => {
-        const building = await BuildingsModel.findById(
-          mongoose.Types.ObjectId(o.office_building_location)
-        ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid building id", error: err.message });
-        });
-
-        const responsible = await Users.findById(
-          mongoose.Types.ObjectId(o.responsible)
-        ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid responsible id", error: err.message });
-        });
-
-        return {
-          ...o._doc,
-          office_building_location: building,
-          responsible: responsible,
-        };
-      });
-
-      Promise.all(promises).then((results) => res.json(results));
-    })
+    .populate("office_building_location")
+    .populate("responsible")
+    .then((offices) => res.status(200).json(offices))
     .catch((err) =>
-      res
-        .status(404)
-        .json({ message: "No Office not found", error: err.message })
+      res.status(404).json({ message: "Offices not found", error: err.message })
     );
 };
 
@@ -99,13 +73,11 @@ exports.createOffice = async (req, res) => {
       res.status(201).json({ message: "Office created", statusCode: 201 })
     )
     .catch((err) =>
-      res
-        .status(400)
-        .json({
-          message: "Invalid office object",
-          statusCode: 400,
-          error: err.message,
-        })
+      res.status(400).json({
+        message: "Invalid office object",
+        statusCode: 400,
+        error: err.message,
+      })
     );
 };
 
@@ -119,12 +91,10 @@ exports.removeOffice = async (req, res) => {
         .json({ result: "success", statusCode: 204, message: "Office removed" })
     )
     .catch((err) =>
-      res
-        .status(400)
-        .json({
-          message: "Invalid office object",
-          statusCode: 400,
-          error: err.message,
-        })
+      res.status(400).json({
+        message: "Invalid office object",
+        statusCode: 400,
+        error: err.message,
+      })
     );
 };
