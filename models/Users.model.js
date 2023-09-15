@@ -56,12 +56,8 @@ const UsersSchema = new mongoose.Schema({
     },
   },
   user_role: {
-    type: String,
-    required: false,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Roles",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Roles",
     default: null,
     validate: {
       validator: function (v) {
@@ -71,12 +67,8 @@ const UsersSchema = new mongoose.Schema({
     },
   },
   department: {
-    type: String,
-    required: false,
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      model: "Departments",
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Departments",
     default: null,
     validate: {
       validator: function (v) {

@@ -15,17 +15,14 @@ exports.verifyToken = async (req, res, next) => {
     req.userData = decoded;
 
     // find by id
-    const role = await RolesModel.findById({
-      _id: mongoose.Types.ObjectId(req.userData.userRole),
-    }).catch((err) => {
-      res.status(400).json({ message: "Invalid role id", error: err.message });
-    });
+    const role = await RolesModel.findById(req.userData.userRole);
 
     // get role tile of role retrieved
     const roleTitle = role.role_name;
     req.roleTitle = roleTitle;
     next();
   } catch (error) {
+    console.log(error);
     res.status(401).json({ message: "Auth failed" });
   }
 };
@@ -36,9 +33,9 @@ exports.verifyUserRole = async (req, res, next) => {
     const roleTitle = req.roleTitle;
     // check if user role is admin or assets manager
     if (roleTitle !== "Admin" && roleTitle !== "AssetsM") {
-      return res
-        .status(401)
-        .json({ message: "Not authorized to alteration of rooms or buildings" });
+      return res.status(401).json({
+        message: "Not authorized to alteration of rooms or buildings",
+      });
     }
     next();
   } catch (error) {

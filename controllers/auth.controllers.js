@@ -63,8 +63,6 @@ exports.register = async (req, res) => {
 
 // Login controller
 exports.login = async (req, res) => {
-  console.log(req.body);
-
   try {
     // find user
     const user = await UsersModel.findOne({ email: req.body.email });

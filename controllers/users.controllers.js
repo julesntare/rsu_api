@@ -8,32 +8,15 @@ exports.getAllUsers = async (_req, res) => {
     status: "active",
   })
     .sort({ added_on: -1 })
-    .then((user) => {
-      const promises = user.map(async (u) => {
-        // get role object for each user from roles model
-        const roleObj = await RolesModel.findById(
-          mongoose.Types.ObjectId(u.user_role)
-        ).catch((err) => {
-          res
-            .status(400)
-            .json({ message: "Invalid user role", error: err.message });
-        });
-
-        return {
-          ...u._doc,
-          user_role: roleObj,
-        };
-      });
-
-      Promise.all(promises).then((results) => res.status(200).json(results));
-    })
+    .populate("user_role department")
+    .then((user) => res.status(200).json(user))
     .catch((err) =>
       res.status(404).json({ message: "No User not found", error: err.message })
     );
 };
 
 exports.getUserById = async (req, res) => {
-  UsersModel.findById(mongoose.Types.ObjectId(req.params.id))
+  UsersModel.findById(req.params.id)
     .then((user) => res.status(200).json(user))
     .catch((err) =>
       res.status(404).json({ message: "User not found", error: err.message })
