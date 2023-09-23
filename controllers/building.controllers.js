@@ -7,21 +7,24 @@ exports.getAllBuildings = async (_req, res) => {
     status: "active",
   })
     .sort({ added_on: -1 })
-    .then((building) => {
-      // embed no_of_rooms in each building
-      const promises = building.map(async (b) => {
-        const no_of_rooms = await RoomsModel.find({
-          room_building: b._id,
-          status: "active",
-        }).countDocuments();
+    .then(async (building) => {
+      const rooms = await RoomsModel.find({
+        status: "active",
+      });
+
+      // map to get the number of rooms per building
+      const roomsPerBuilding = building.map((building) => {
+        const roomsInBuilding = rooms.filter(
+          (room) => room.room_building.toString() === building._id.toString()
+        );
 
         return {
-          ...b._doc,
-          no_of_rooms: no_of_rooms,
+          ...building._doc,
+          no_of_rooms: roomsInBuilding.length,
         };
       });
 
-      Promise.all(promises).then((results) => res.json(results));
+      res.json(roomsPerBuilding);
     })
     .catch((err) =>
       res
@@ -66,9 +69,11 @@ exports.createBuilding = async (req, res) => {
         .json({ message: "Building added successfully", statusCode: 201 })
     )
     .catch((err) =>
-      res
-        .status(400)
-        .json({ message: "Invalid building object",statusCode: 400, error: err.message })
+      res.status(400).json({
+        message: "Invalid building object",
+        statusCode: 400,
+        error: err.message,
+      })
     );
 };
 
