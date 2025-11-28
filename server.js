@@ -53,7 +53,9 @@ var options = {
         url: `http://localhost:${PORT}`,
       },
       {
-        url: `https://rsu-api-mazg.onrender.com`,
+        url: process.env.VERCEL_URL
+          ? process.env.VERCEL_URL
+          : `http://localhost:${PORT}`,
       },
     ],
     components: {
@@ -84,8 +86,30 @@ app.use("/api/modules", modRoutes);
 app.use("/api/groups", groupsRoutes);
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/csv", csvRoute);
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+// Swagger setup with CDN assets for Vercel compatibility
+app.use(
+  "/swagger",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpecs, {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css",
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js",
+    ],
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  })
+);
 
 app.listen(PORT, () => {
-  log.green("SERVER STATUS", `Running on http://localhost:${PORT}`);
+  log.green(
+    "SERVER STATUS",
+    `Running on ${
+      process.env.VERCEL_URL
+        ? process.env.VERCEL_URL
+        : `http://localhost:${PORT}`
+    }`
+  );
 });

@@ -1,0 +1,8 @@
+node_modules
+.git
+.env.example
+coverage
+test
+*.md
+.gitignore
+RSU_API.postman_collection.json
