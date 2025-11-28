@@ -1,0 +1,1863 @@
+{
+	"info": {
+		"_postman_id": "rsu-api-collection-v1",
+		"name": "RSU API Collection",
+		"description": "Complete API collection for UR-CST RSU (Room Scheduling & Utilization) API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Initial",
+			"item": [
+				{
+					"name": "Welcome Message",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								""
+							]
+						},
+						"description": "Returns welcome message from the API"
+					},
+					"response": []
+				}
+			],
+			"description": "Initial API endpoint"
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"auth_token\", jsonData.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"YourPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login to the application"
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullname\": \"John Doe\",\n    \"title\": \"System Admin\",\n    \"email\": \"johndoe@gmail.com\",\n    \"mobile_no\": \"0788888888\",\n    \"password\": \"jodT^O3)@22\",\n    \"user_role\": \"6377ecba5eeae9ff7c42423e\",\n    \"department\": \"6377ecba5eeae9ff7c42423e\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout from the application"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints"
+		},
+		{
+			"name": "Buildings",
+			"item": [
+				{
+					"name": "Get All Buildings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/building/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"building",
+								"all"
+							]
+						},
+						"description": "Get all buildings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Building By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/building/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"building",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a building by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Building",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"building_name\": \"Muhabura\",\n    \"building_description\": \"Building containing classes and offices\",\n    \"floors\": 5,\n    \"coordinates\": [-1.33784783, 30.19293828],\n    \"near_locations\": [\"Kalisimbi\"],\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/building",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"building"
+							]
+						},
+						"description": "Create a new building"
+					},
+					"response": []
+				},
+				{
+					"name": "Modify Building",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"building_name\": \"Muhabura\",\n    \"building_description\": \"Updated building description\",\n    \"floors\": 5,\n    \"coordinates\": [-1.33784783, 30.19293828],\n    \"near_locations\": [\"Kalisimbi\"],\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/building/modify/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"building",
+								"modify",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Modify a building by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Building",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/building/remove/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"building",
+								"remove",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a building by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Building management endpoints"
+		},
+		{
+			"name": "Room Types",
+			"item": [
+				{
+					"name": "Get All Room Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/roomType/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"roomType",
+								"all"
+							]
+						},
+						"description": "Get all room types"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room Type By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/roomType/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"roomType",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a room type by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Room Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"room_type_name\": \"classroom\",\n    \"room_type_description\": \"room intended to be used for teaching\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/roomType/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"roomType",
+								"create"
+							]
+						},
+						"description": "Create a new room type"
+					},
+					"response": []
+				},
+				{
+					"name": "Modify Room Type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"room_type_name\": \"classroom\",\n    \"room_type_description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/roomType/modify/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"roomType",
+								"modify",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Modify a room type by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Room Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/roomType/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"roomType",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a room type by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Room type management endpoints"
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "Get All Rooms",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"rooms",
+								"all"
+							]
+						},
+						"description": "Get all rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"rooms",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a room by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Room",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"room_name\": \"P001\",\n    \"room_description\": \"Room can be used for classes, conference and other events\",\n    \"room_building\": \"63682d0710000a7041ae5aac\",\n    \"room_floor\": 0,\n    \"room_type\": \"6368bc27a3c65b114194fd94\",\n    \"capacity\": 120,\n    \"has_fixed_seats\": true,\n    \"resources\": [\"projector\", \"speakers\"],\n    \"responsible\": \"6368bc27a3c65b114194fd94\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/rooms/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"rooms",
+								"create"
+							]
+						},
+						"description": "Create a new room"
+					},
+					"response": []
+				}
+			],
+			"description": "Room management endpoints"
+		},
+		{
+			"name": "Offices",
+			"item": [
+				{
+					"name": "Get All Offices",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/offices/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								"all"
+							]
+						},
+						"description": "Get all offices"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Office By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/offices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get an office by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Office",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"office_name\": \"Registrar Office\",\n    \"office_description\": \"The Registrar Office is responsible for the registration of students and the maintenance of their academic records.\",\n    \"office_building_location\": \"63bbc858d58eb309ee2bc02a\",\n    \"office_type\": \"private\",\n    \"building_floor\": 0,\n    \"coordinates\": [-1.962621, 30.064461],\n    \"capacity\": 2,\n    \"responsible\": \"63befca5ba573592f077b7d2\",\n    \"schedules\": [[1, \"09:00\", \"17:00\"], [2, \"09:00\", \"15:00\"]],\n    \"img_url\": \"https://res.cloudinary.com/julesntare/image/upload/v1673265264/rsu_cst_buildings/undraw_apartment_rent_o0ut_sj75zz.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offices/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								"create"
+							]
+						},
+						"description": "Create a new office"
+					},
+					"response": []
+				}
+			],
+			"description": "Office management endpoints"
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get All Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/role/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								"all"
+							]
+						},
+						"description": "Get all roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Role By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/role/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a role by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role_name\": \"Admin\",\n    \"role_description\": \"Admin role\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/role/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								"create"
+							]
+						},
+						"description": "Create a new role (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role_name\": \"Admin\",\n    \"role_description\": \"Updated admin role description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/role/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Update a role by ID (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Role",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/role/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a role by ID (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Role management endpoints"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"all"
+							]
+						},
+						"description": "Get all users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a user by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/role/:role",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"role",
+								":role"
+							],
+							"variable": [
+								{
+									"key": "role",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get users by role"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/search/:keyword",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"search",
+								":keyword"
+							],
+							"variable": [
+								{
+									"key": "keyword",
+									"value": ""
+								}
+							]
+						},
+						"description": "Search users by keyword (fullname, mobile_no, email)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullname\": \"Updated Name\",\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/update/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"update",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Update a user by ID (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/delete/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"delete",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a user by ID (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"OldPassword123!\",\n    \"new_password\": \"NewPassword123!\",\n    \"confirm_password\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/change/password/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"change",
+								"password",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change user password"
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roleId\": \"6377ecba5eeae9ff7c42423e\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:id/change/role",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"change",
+								"role"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change user role (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:id/change/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"change",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change user status"
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Email",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"newemail@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:id/change/email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"change",
+								"email"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change user email"
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Mobile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mobile_no\": \"0789999999\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:id/change/mobile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"change",
+								"mobile"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change user mobile number"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Departments",
+			"item": [
+				{
+					"name": "Get All Departments",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"all"
+							]
+						},
+						"description": "Get all departments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Department By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a department by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Department",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"department_name\": \"Computer Science\",\n    \"department_description\": \"Department of Computer Science\",\n    \"department_head\": \"1f9f1b9b9c9d9b1b8c8c8c8c\",\n    \"near_locations\": [\"muhazi conference hall\", \"girls hostels near dusaid\"],\n    \"office_location\": [-1.92424, 30.92424],\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"create"
+							]
+						},
+						"description": "Create a new department (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Department Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id/change/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"change",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change department status (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Department Head",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"head\": \"6377ecba5eeae9ff7c42423e\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id/change/head",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"change",
+								"head"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change department head (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Office Coordinates",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lat\": -1.92424,\n    \"long\": 30.92424\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id/change/office_coordinates",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"change",
+								"office_coordinates"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change department office coordinates"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Near Locations",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lat\": -1.92424,\n    \"long\": 30.92424\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id/change/near_locations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"change",
+								"near_locations"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change department near locations"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Department",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a department (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Department management endpoints"
+		},
+		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "Get All Modules",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/modules/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								""
+							]
+						},
+						"description": "Get all modules"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/modules/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a module by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Module",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"module_name\": \"Calculus II\",\n    \"module_description\": \"Mathematics-bse module description\",\n    \"module_code\": \"MAT1261\",\n    \"department\": \"6377aadcd6eef3f0c06c166d\",\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/modules/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"create"
+							]
+						},
+						"description": "Create a new module (Scheduler only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Module",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"module_name\": \"Updated Module Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/modules/update/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"update",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Update a module (Scheduler only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Module Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/modules/change/status/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"change",
+								"status",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Change module status (Scheduler only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Module",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/modules/remove/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"remove",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete a module (Scheduler only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Module management endpoints"
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Get All Groups",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/groups/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								"all"
+							]
+						},
+						"description": "Get all groups"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Group By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/groups/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a group by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"group_name\": \"Year 4 Computer Science\",\n    \"group_description\": \"Year 4 group\",\n    \"group_year\": 4,\n    \"department\": \"5f9f1b9b0b5c3c0b8c8b8b5d\",\n    \"class_presenter\": \"5f9f1b9b0b5c3c0b8c8b8b5d\",\n    \"class_size\": 30\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/groups/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								"create"
+							]
+						},
+						"description": "Create a new group (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Group management endpoints"
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Get All Bookings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"all"
+							]
+						},
+						"description": "Get all bookings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Any Bookings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/any",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"any"
+							]
+						},
+						"description": "Get any bookings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a booking by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room Status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/room/status/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"room",
+								"status",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get current status for a specific room"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"6377aadcd6eef3f0c06c166d\",\n    \"all_authorized\": [\"6377aadcd6eef3f0c06c166d\"],\n    \"activity\": {\n        \"activity_name\": \"Learning\",\n        \"activity_description\": \"Learning python in usual class\",\n        \"activity_recurrence\": \"weekly\",\n        \"activity_starting_date\": \"2023-01-02\",\n        \"activity_ending_date\": \"2023-01-04\",\n        \"activity_days\": [1, 3],\n        \"activity_time\": [[\"10:00\", \"11:00\"], [\"12:00\", \"13:00\"]],\n        \"activity_meeting_link\": \"https://meet.google.com/lookup/abc123\"\n    },\n    \"room\": \"63b299af8d89c14fb437f073\",\n    \"additional_info\": \"we are requesting for panel seats\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/bookings/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"create"
+							]
+						},
+						"description": "Create a new booking"
+					},
+					"response": []
+				}
+			],
+			"description": "Booking management endpoints"
+		},
+		{
+			"name": "Timetable",
+			"item": [
+				{
+					"name": "Upload CSV",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/csv/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"csv",
+								"upload"
+							]
+						},
+						"description": "Upload a CSV file for timetable manipulation (Scheduler only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Save Timetable",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"starting_date\": \"2023-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/csv/save_timetable",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"csv",
+								"save_timetable"
+							]
+						},
+						"description": "Save timetable to database (Scheduler only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Timetable manipulation endpoints"
+		}
+	]
+}

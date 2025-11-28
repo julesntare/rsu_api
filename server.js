@@ -47,9 +47,7 @@ var options = {
       version: "1.0.0",
       description: "Welcome to UR-CST RSU API!",
     },
-    security: [
-      { bearerAuth: [] },
-    ],
+    security: [{ bearerAuth: [] }],
     servers: [
       {
         url: `http://localhost:${PORT}`,
