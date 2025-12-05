@@ -155,7 +155,6 @@ const getRoomStatus = async (roomId) => {
                   `${activityStartingDate}T${time[1]}`
                 ).getTime();
                 if (now >= activityTimeStart && now <= activityTimeEnd) {
-                  console.log(activityStartingDate);
                   result = {
                     value: 0,
                     timeRange: [

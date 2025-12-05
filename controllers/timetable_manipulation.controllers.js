@@ -45,7 +45,6 @@ exports.uploadRawFile = async (req, res) => {
     "utf8"
   );
   // split lines containing prefix ',_'
-  
 };
 
 exports.uploadCSV = async (req, res) => {
@@ -213,15 +212,6 @@ exports.saveTimetable = async (req, res) => {
   );
   const csvDataJson = JSON.parse(timetableJson);
 
-  // a certain algorithm to manipulate the data and save it to database
-  // skip first index of csvDataJson array because it contains column names
-  // _Event field has this format of value: Mon 11:00am-02:00pm 1-13 (Mon is day, 11:00am-02:00pm is time, 1-13 is week range)
-  // _Module has module name (but we have to search in database for module id if not found then add null)
-  // _Room has room name with format: <building_name>_<room_name> (we have to search in database by splitting to get room_name only and get room id if not found then add null)
-  // _StaffSurname and _StaffForenames fields must be combined and advanced search in database for user id if not found then add null
-  // _Group has group name (but we have to search in database for group id if not found then add null)
-  // save in bookings collection
-  // start algorithm now
   try {
     const bookings = [];
     for (let index = 1; index < 16; index++) {
@@ -262,7 +252,9 @@ exports.saveTimetable = async (req, res) => {
         // check if combined staff name is found in database even if it is not in the same order
         $or: [
           { fullname: staff.toLowerCase() },
-          { fullname: staff.toLocaleLowerCase().split(" ").reverse().join(" ") },
+          {
+            fullname: staff.toLocaleLowerCase().split(" ").reverse().join(" "),
+          },
         ],
       });
       let staffId = null;
@@ -271,7 +263,9 @@ exports.saveTimetable = async (req, res) => {
       }
 
       // get group id
-      const groupExists = await GroupsModel.findOne({ group_name: group.toLowerCase() });
+      const groupExists = await GroupsModel.findOne({
+        group_name: group.toLowerCase(),
+      });
       let groupId = null;
       if (groupExists) {
         groupId = groupExists._id;
@@ -324,7 +318,6 @@ exports.saveTimetable = async (req, res) => {
     }
 
     // save bookings to database
-    // console.log(bookings);
     BookingsModel.insertMany(bookings)
       .then(() =>
         res
